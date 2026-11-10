@@ -1,9 +1,13 @@
-<img src="docs/assets/icon.svg" width="96" align="right" alt="Pocket Reviewer icon">
+<p align="center">
+  <img src="docs/assets/icon.svg" width="112" alt="Pocket Reviewer icon">
+</p>
 
-# Pocket Reviewer
+<h1 align="center">Pocket Reviewer</h1>
 
-[![CI](https://github.com/carolinasolfernandez/pocket-reviewer/actions/workflows/ci.yml/badge.svg)](https://github.com/carolinasolfernandez/pocket-reviewer/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+<p align="center">
+  <a href="https://github.com/carolinasolfernandez/pocket-reviewer/actions/workflows/ci.yml"><img src="https://github.com/carolinasolfernandez/pocket-reviewer/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
+</p>
 
 An Android app that watches your chat notifications for GitHub pull request links and
 reviews them with Claude. When a teammate drops a PR link in Google Chat or Slack, the
