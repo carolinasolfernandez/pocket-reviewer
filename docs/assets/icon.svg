@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 108 108" role="img" aria-label="Pocket Reviewer icon">
+  <rect width="108" height="108" rx="26" fill="#4F46E5"/>
+  <g transform="translate(54 54) scale(0.95) translate(-54 -54)">
+    <path d="M54,22 L78,31 V54 C78,70 67,81 54,87 C41,81 30,70 30,54 V31 Z" fill="#FFFFFF"/>
+    <path d="M39.5,42 a4.5,4.5 0 1,0 9,0 a4.5,4.5 0 1,0 -9,0 M39.5,66 a4.5,4.5 0 1,0 9,0 a4.5,4.5 0 1,0 -9,0 M44,46.5 V61.5 M59.5,66 a4.5,4.5 0 1,0 9,0 a4.5,4.5 0 1,0 -9,0 M64,61.5 V52 C64,46 60,42 55,42 H53 M57,37.5 L52.5,42 L57,46.5" fill="none" stroke="#4F46E5" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

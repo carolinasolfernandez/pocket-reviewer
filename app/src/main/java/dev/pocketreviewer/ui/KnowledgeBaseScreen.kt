@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import dev.pocketreviewer.R
+import dev.pocketreviewer.ui.theme.AppTheme
 import dev.pocketreviewer.config.ConfigStore
 import dev.pocketreviewer.config.Keys
 import dev.pocketreviewer.util.GitHubHost
@@ -138,7 +139,7 @@ fun KnowledgeBaseScreen() {
             Text(
                 stringResource(R.string.kb_fallback_note),
                 style = MaterialTheme.typography.bodySmall,
-                color = Color(0xFFF59E0B)
+                color = AppTheme.colors.warning
             )
         }
     }
@@ -258,7 +259,7 @@ private fun GithubSourceEditor(
     message?.let {
         Text(
             it, style = MaterialTheme.typography.bodySmall,
-            color = if (isError) MaterialTheme.colorScheme.error else Color(0xFF34D399)
+            color = if (isError) MaterialTheme.colorScheme.error else AppTheme.colors.success
         )
     }
     if (info != null && hasContent) {
@@ -371,7 +372,7 @@ private fun KbFileDialog(file: KbFile, onDismiss: () -> Unit) {
             Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(file.name.substringAfterLast('/'), style = MaterialTheme.typography.titleMedium)
                 Card(
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF0F172A)),
+                    colors = CardDefaults.cardColors(containerColor = AppTheme.colors.codeBackground),
                     shape = RoundedCornerShape(8.dp)
                 ) {
                     Box(
@@ -385,7 +386,7 @@ private fun KbFileDialog(file: KbFile, onDismiss: () -> Unit) {
                             file.content,
                             fontFamily = FontFamily.Monospace,
                             fontSize = 11.sp, lineHeight = 16.sp,
-                            color = Color(0xFFE2E8F0)
+                            color = AppTheme.colors.codeText
                         )
                     }
                 }

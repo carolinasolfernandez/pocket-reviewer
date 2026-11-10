@@ -1,3 +1,5 @@
+<img src="docs/assets/icon.svg" width="96" align="right" alt="Pocket Reviewer icon">
+
 # Pocket Reviewer
 
 [![CI](https://github.com/carolinasolfernandez/pocket-reviewer/actions/workflows/ci.yml/badge.svg)](https://github.com/carolinasolfernandez/pocket-reviewer/actions/workflows/ci.yml)

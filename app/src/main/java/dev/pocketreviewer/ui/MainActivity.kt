@@ -43,6 +43,7 @@ import dev.pocketreviewer.messaging.SlackClient
 import dev.pocketreviewer.service.ManualFlow
 import dev.pocketreviewer.service.ManualStepService
 import dev.pocketreviewer.service.PRNotificationListener
+import dev.pocketreviewer.ui.theme.PocketReviewerTheme
 import dev.pocketreviewer.util.GitHubHost
 import dev.pocketreviewer.util.PullRequest
 import kotlinx.coroutines.Dispatchers
@@ -106,7 +107,7 @@ class MainActivity : ComponentActivity(), SettingsActions {
         val openTab = intent?.getStringExtra("open_tab")
         openPrKey = intent?.getStringExtra(PRNotificationListener.EXTRA_OPEN_PR_KEY)
         setContent {
-            MaterialTheme(colorScheme = darkColorScheme()) {
+            PocketReviewerTheme {
                 AppTabs(
                     initialTab = if (openTab == "history") TAB_HISTORY else TAB_REVIEW,
                     settingsActions = this,

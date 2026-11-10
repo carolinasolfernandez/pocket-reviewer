@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import dev.pocketreviewer.R
+import dev.pocketreviewer.ui.theme.AppTheme
 import dev.pocketreviewer.api.ReviewManager
 import dev.pocketreviewer.data.ReviewEntry
 import dev.pocketreviewer.data.ReviewHistoryRepository
@@ -130,9 +131,9 @@ fun HistoryScreen(
 @Composable
 fun HistoryCard(entry: ReviewEntry, onClick: () -> Unit) {
     val verdictColor = when (entry.verdict) {
-        "APPROVE"         -> Color(0xFF34D399)
-        "REQUEST_CHANGES" -> Color(0xFFF59E0B)
-        else              -> Color(0xFF94A3B8)
+        "APPROVE"         -> AppTheme.colors.success
+        "REQUEST_CHANGES" -> AppTheme.colors.warning
+        else              -> MaterialTheme.colorScheme.onSurfaceVariant
     }
     val verdictIcon = when (entry.verdict) {
         "APPROVE"         -> "✅"
@@ -159,11 +160,11 @@ fun HistoryCard(entry: ReviewEntry, onClick: () -> Unit) {
                     Text(formatTime(entry.timestampMs),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    if (entry.status == "PENDING") StatusChip(stringResource(R.string.history_chip_pending), Color(0xFFF59E0B))
-                    else if (entry.wasMerged)   StatusChip(stringResource(R.string.history_chip_merged), Color(0xFF7C3AED))
-                    else if (entry.wasApproved) StatusChip(stringResource(R.string.history_chip_approved), Color(0xFF059669))
-                    else if (entry.wasPosted)   StatusChip(stringResource(R.string.history_chip_commented), Color(0xFF6366F1))
-                    if (entry.hasConflicts)     StatusChip(stringResource(R.string.history_chip_conflicts), Color(0xFFEF4444))
+                    if (entry.status == "PENDING") StatusChip(stringResource(R.string.history_chip_pending), AppTheme.colors.warning)
+                    else if (entry.wasMerged)   StatusChip(stringResource(R.string.history_chip_merged), AppTheme.colors.merge)
+                    else if (entry.wasApproved) StatusChip(stringResource(R.string.history_chip_approved), AppTheme.colors.success)
+                    else if (entry.wasPosted)   StatusChip(stringResource(R.string.history_chip_commented), MaterialTheme.colorScheme.primary)
+                    if (entry.hasConflicts)     StatusChip(stringResource(R.string.history_chip_conflicts), MaterialTheme.colorScheme.error)
                 }
             }
         }
@@ -204,9 +205,9 @@ fun HistoryDetailDialog(
         else              -> stringResource(R.string.review_screen_verdict_comments)
     }
     val verdictColor = when (entry.verdict) {
-        "APPROVE"         -> Color(0xFF34D399)
-        "REQUEST_CHANGES" -> Color(0xFFF59E0B)
-        else              -> Color(0xFF94A3B8)
+        "APPROVE"         -> AppTheme.colors.success
+        "REQUEST_CHANGES" -> AppTheme.colors.warning
+        else              -> MaterialTheme.colorScheme.onSurfaceVariant
     }
     val cleanText = entry.reviewText
         .removePrefix("REQUEST_CHANGES").removePrefix("APPROVE").removePrefix("COMMENT")
@@ -260,11 +261,11 @@ fun HistoryDetailDialog(
                         TextButton(
                             onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(entry.prUrl))) },
                             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp)
-                        ) { Text("GitHub →", color = Color(0xFF6366F1), style = MaterialTheme.typography.bodySmall) }
+                        ) { Text("GitHub →", color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.bodySmall) }
                     }
                 }
 
-                Card(colors = CardDefaults.cardColors(containerColor = Color(0xFF0F172A)),
+                Card(colors = CardDefaults.cardColors(containerColor = AppTheme.colors.codeBackground),
                     shape = RoundedCornerShape(8.dp)) {
                     Box(modifier = Modifier
                         .fillMaxWidth()
@@ -274,7 +275,7 @@ fun HistoryDetailDialog(
                         Text(cleanText,
                             fontFamily = FontFamily.Monospace,
                             fontSize = 11.sp, lineHeight = 16.sp,
-                            color = Color(0xFFE2E8F0))
+                            color = AppTheme.colors.codeText)
                     }
                 }
 
@@ -321,7 +322,7 @@ fun HistoryDetailDialog(
                                 } catch (e: Exception) { ActionState.ActionError(e.message ?: context.getString(R.string.history_error_generic)) }
                             }
                         }, modifier = Modifier.fillMaxWidth(),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6366F1))) {
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)) {
                             Text(stringResource(if (entry.wasPosted) R.string.history_post_again else R.string.history_post))
                         }
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -359,7 +360,7 @@ fun HistoryDetailDialog(
                                     } catch (e: Exception) { ActionState.ActionError(e.message ?: context.getString(R.string.history_error_generic)) }
                                 }
                             }, modifier = Modifier.weight(1f),
-                                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7C3AED))) {
+                                colors = ButtonDefaults.buttonColors(containerColor = AppTheme.colors.merge)) {
                                 Text(stringResource(if (entry.wasMerged) R.string.history_approve_and_merge_again else R.string.review_screen_approve_and_merge))
                             }
                         }
@@ -428,7 +429,7 @@ private fun ColumnScope.ManualStepPanel(
         TextButton(
             onClick = { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(entry.prUrl))) },
             contentPadding = PaddingValues(0.dp)
-        ) { Text(stringResource(R.string.history_view_on_github), color = Color(0xFF6366F1), style = MaterialTheme.typography.bodySmall) }
+        ) { Text(stringResource(R.string.history_view_on_github), color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.bodySmall) }
     }
     Text(preview, style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -438,12 +439,12 @@ private fun ColumnScope.ManualStepPanel(
         val cleanText = entry.reviewText
             .removePrefix("REQUEST_CHANGES").removePrefix("APPROVE").removePrefix("COMMENT")
             .trimStart('\n', ' ')
-        Card(colors = CardDefaults.cardColors(containerColor = Color(0xFF0F172A)),
+        Card(colors = CardDefaults.cardColors(containerColor = AppTheme.colors.codeBackground),
             shape = RoundedCornerShape(8.dp)) {
             Box(modifier = Modifier.fillMaxWidth().heightIn(max = 220.dp)
                 .verticalScroll(rememberScrollState()).padding(10.dp)) {
                 Text(cleanText, fontFamily = FontFamily.Monospace,
-                    fontSize = 11.sp, lineHeight = 16.sp, color = Color(0xFFE2E8F0))
+                    fontSize = 11.sp, lineHeight = 16.sp, color = AppTheme.colors.codeText)
             }
         }
     }
@@ -461,14 +462,14 @@ private fun ColumnScope.ManualStepPanel(
                 onClick = { onStartManualStep(entry.prKey, entry.prUrl, stage,
                     dev.pocketreviewer.service.ManualStepService.ACTION_APPROVE_MERGE) },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7C3AED))
+                colors = ButtonDefaults.buttonColors(containerColor = AppTheme.colors.merge)
             ) { Text(stringResource(R.string.review_screen_approve_and_merge)) }
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(
                 onClick = { onStartManualStep(entry.prKey, entry.prUrl, stage, "confirm") },
                 modifier = Modifier.weight(1f),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFF59E0B))
+                colors = ButtonDefaults.buttonColors(containerColor = AppTheme.colors.warning)
             ) { Text(confirmLabel) }
             OutlinedButton(
                 onClick = { onStartManualStep(entry.prKey, entry.prUrl, stage, "skip") },
@@ -481,9 +482,9 @@ private fun ColumnScope.ManualStepPanel(
 
 @Composable
 fun WarnBanner(text: String) {
-    Card(colors = CardDefaults.cardColors(containerColor = Color(0xFF422006))) {
+    Card(colors = CardDefaults.cardColors(containerColor = AppTheme.colors.warningContainer)) {
         Text(text, modifier = Modifier.padding(12.dp),
-            color = Color(0xFFFBBF24),
+            color = AppTheme.colors.onWarningContainer,
             style = MaterialTheme.typography.bodySmall)
     }
 }

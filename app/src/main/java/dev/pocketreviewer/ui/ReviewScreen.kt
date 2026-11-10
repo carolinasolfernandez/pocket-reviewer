@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.pocketreviewer.R
+import dev.pocketreviewer.ui.theme.AppTheme
 import dev.pocketreviewer.api.ReviewManager
 import dev.pocketreviewer.config.ConfigStore
 import dev.pocketreviewer.util.GitHubHost
@@ -210,9 +211,9 @@ fun ReviewResultCard(
         else                                             -> stringResource(R.string.review_screen_verdict_comments)
     }
     val verdictColor = when {
-        result.reviewText.startsWith("APPROVE")         -> Color(0xFF34D399)
-        result.reviewText.startsWith("REQUEST_CHANGES") -> Color(0xFFF59E0B)
-        else                                             -> Color(0xFF94A3B8)
+        result.reviewText.startsWith("APPROVE")         -> AppTheme.colors.success
+        result.reviewText.startsWith("REQUEST_CHANGES") -> AppTheme.colors.warning
+        else                                             -> MaterialTheme.colorScheme.onSurfaceVariant
     }
     // Strip the APPROVE/COMMENT/REQUEST_CHANGES prefix from the displayed text
     val cleanText = result.reviewText
@@ -249,7 +250,7 @@ fun ReviewResultCard(
         var copied by remember { mutableStateOf(false) }
 
         Card(
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF0F172A)),
+            colors = CardDefaults.cardColors(containerColor = AppTheme.colors.codeBackground),
             shape = RoundedCornerShape(8.dp)
         ) {
             Column {
@@ -261,7 +262,7 @@ fun ReviewResultCard(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(stringResource(R.string.review_screen_review_header), fontSize = 11.sp, color = Color(0xFF64748B),
+                    Text(stringResource(R.string.review_screen_review_header), fontSize = 11.sp, color = AppTheme.colors.codeMuted,
                         fontFamily = FontFamily.Monospace)
                     TextButton(
                         onClick = {
@@ -272,16 +273,16 @@ fun ReviewResultCard(
                     ) {
                         Icon(Icons.Default.ContentCopy, contentDescription = stringResource(R.string.review_screen_copy),
                             modifier = Modifier.size(14.dp),
-                            tint = if (copied) Color(0xFF34D399) else Color(0xFF94A3B8))
+                            tint = if (copied) AppTheme.colors.success else AppTheme.colors.codeMuted)
                         Spacer(Modifier.width(4.dp))
                         Text(
                             if (copied) stringResource(R.string.review_screen_copied) else stringResource(R.string.review_screen_copy),
                             fontSize = 11.sp,
-                            color = if (copied) Color(0xFF34D399) else Color(0xFF94A3B8)
+                            color = if (copied) AppTheme.colors.success else AppTheme.colors.codeMuted
                         )
                     }
                 }
-                Divider(color = Color(0xFF1E293B))
+                Divider(color = AppTheme.colors.codeDivider)
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -294,7 +295,7 @@ fun ReviewResultCard(
                         fontFamily = FontFamily.Monospace,
                         fontSize = 12.sp,
                         lineHeight = 18.sp,
-                        color = Color(0xFFE2E8F0)
+                        color = AppTheme.colors.codeText
                     )
                 }
             }
@@ -315,7 +316,7 @@ fun ReviewResultCard(
                     onClick = onPost,
                     modifier = Modifier.fillMaxWidth(),
                     enabled = !isBusy,
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6366F1))
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
                 ) { Text(stringResource(R.string.review_screen_post_comments)) }
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -329,7 +330,7 @@ fun ReviewResultCard(
                         onClick = onMerge,
                         modifier = Modifier.weight(1f),
                         enabled = !isBusy,
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7C3AED))
+                        colors = ButtonDefaults.buttonColors(containerColor = AppTheme.colors.merge)
                     ) { Text(stringResource(R.string.review_screen_merge)) }
                 }
             }
@@ -374,9 +375,9 @@ fun ReviewResultCard(
 
 @Composable
 fun SuccessBanner(text: String) {
-    Card(colors = CardDefaults.cardColors(containerColor = Color(0xFF064E3B))) {
+    Card(colors = CardDefaults.cardColors(containerColor = AppTheme.colors.successContainer)) {
         Text(text, modifier = Modifier.padding(12.dp),
-            color = Color(0xFF34D399),
+            color = AppTheme.colors.onSuccessContainer,
             style = MaterialTheme.typography.bodyMedium)
     }
 }
@@ -390,7 +391,7 @@ fun ApproveActionsRow(onApprove: () -> Unit, onMerge: () -> Unit, enabled: Boole
         }
         Button(onClick = onMerge, modifier = Modifier.weight(1f),
             enabled = enabled,
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7C3AED))) {
+            colors = ButtonDefaults.buttonColors(containerColor = AppTheme.colors.merge)) {
             Text(stringResource(R.string.review_screen_approve_and_merge))
         }
     }
@@ -408,9 +409,9 @@ fun CiDisclaimer(ciState: String) {
         "NONE"    -> stringResource(R.string.review_screen_ci_none)
         else      -> return
     }
-    Card(colors = CardDefaults.cardColors(containerColor = Color(0xFF422006))) {
+    Card(colors = CardDefaults.cardColors(containerColor = AppTheme.colors.warningContainer)) {
         Text(text, modifier = Modifier.padding(12.dp),
-            color = Color(0xFFFBBF24),
+            color = AppTheme.colors.onWarningContainer,
             style = MaterialTheme.typography.bodySmall)
     }
 }
@@ -418,7 +419,7 @@ fun CiDisclaimer(ciState: String) {
 /** Red "merge conflicts" chip — the PR can't be merged until they are resolved. */
 @Composable
 fun ConflictStatusChip() {
-    val color = Color(0xFFEF4444)
+    val color = MaterialTheme.colorScheme.error
     Surface(shape = RoundedCornerShape(6.dp), color = color.copy(alpha = 0.15f)) {
         Text(stringResource(R.string.review_screen_conflicts_chip),
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
@@ -430,10 +431,10 @@ fun ConflictStatusChip() {
 /** Prominent merge-conflict warning, shown before the action buttons. */
 @Composable
 fun ConflictDisclaimer() {
-    Card(colors = CardDefaults.cardColors(containerColor = Color(0xFF450A0A))) {
+    Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)) {
         Text(stringResource(R.string.review_screen_conflicts_warning),
             modifier = Modifier.padding(12.dp),
-            color = Color(0xFFFCA5A5),
+            color = MaterialTheme.colorScheme.onErrorContainer,
             style = MaterialTheme.typography.bodySmall)
     }
 }
@@ -441,7 +442,7 @@ fun ConflictDisclaimer() {
 @Composable
 fun CiStatusChip(ciFailingChecks: List<String>) {
     if (ciFailingChecks.isEmpty()) return
-    val ciColor = Color(0xFFF59E0B)
+    val ciColor = AppTheme.colors.warning
     Surface(shape = RoundedCornerShape(6.dp), color = ciColor.copy(alpha = 0.15f)) {
         val label = ciFailingChecks.take(2).joinToString(", ") +
             if (ciFailingChecks.size > 2) " +${ciFailingChecks.size - 2}" else ""

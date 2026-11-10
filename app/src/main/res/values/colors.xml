@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Window background shown before Compose draws; matches the light theme. -->
+    <color name="app_background">#F7F8FB</color>
+    <!-- Brand indigo behind the launcher icon. -->
+    <color name="ic_launcher_background">#4F46E5</color>
+</resources>

@@ -1,6 +1,12 @@
 package dev.pocketreviewer.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
@@ -13,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.res.stringResource
 import dev.pocketreviewer.R
+import dev.pocketreviewer.ui.theme.AppTheme
 import dev.pocketreviewer.service.PRNotificationListener
 import kotlinx.coroutines.launch
 
@@ -75,13 +82,17 @@ fun StatusScreen(
 
         // ── Setup checklist ──────────────────────────────────────────────────
         setup?.let { st ->
-            Card(colors = CardDefaults.cardColors(
-                containerColor = if (st.ready) MaterialTheme.colorScheme.surfaceVariant
-                                 else MaterialTheme.colorScheme.errorContainer)) {
+            // Calm even when incomplete: same surface as the other cards, with an amber
+            // outline instead of a full-colour alarm.
+            Card(
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+                border = if (st.ready) null else BorderStroke(1.dp, AppTheme.colors.warning)
+            ) {
                 Column(modifier = Modifier.padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     Text(stringResource(if (st.ready) R.string.setup_ready else R.string.setup_incomplete),
-                        style = MaterialTheme.typography.titleSmall)
+                        style = MaterialTheme.typography.titleSmall,
+                        color = if (st.ready) AppTheme.colors.success else AppTheme.colors.warning)
 
                     StatusRow(stringResource(R.string.setup_notification_access),
                         if (st.notificationAccess) StatusLevel.OK else StatusLevel.ERROR,
@@ -240,11 +251,11 @@ fun StatusScreen(
         // Latest log
         val lastLog = PRNotificationListener.lastLog
         if (lastLog.isNotBlank()) {
-            Card(colors = CardDefaults.cardColors(containerColor = Color(0xFF0F172A))) {
+            Card(colors = CardDefaults.cardColors(containerColor = AppTheme.colors.codeBackground)) {
                 Column(modifier = Modifier.padding(12.dp),
                     verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(stringResource(R.string.status_last_log), style = MaterialTheme.typography.titleSmall,
-                        color = Color(0xFF94A3B8))
+                        color = AppTheme.colors.codeMuted)
                     Box(modifier = Modifier
                         .fillMaxWidth()
                         .sizeIn(maxHeight = 200.dp)
@@ -252,7 +263,7 @@ fun StatusScreen(
                         Text(lastLog,
                             fontFamily = FontFamily.Monospace,
                             fontSize = 11.sp, lineHeight = 15.sp,
-                            color = Color(0xFFE2E8F0))
+                            color = AppTheme.colors.codeText)
                     }
                 }
             }
@@ -285,19 +296,29 @@ fun StatusRow(label: String, level: StatusLevel, detail: String) {
     ) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically) {
-            Text(when (level) {
-                StatusLevel.OK    -> "✅"
-                StatusLevel.WARN  -> "⚠️"
-                StatusLevel.ERROR -> "❌"
-                StatusLevel.INFO  -> "ℹ️"
-            }, fontSize = 14.sp)
+            Icon(
+                imageVector = when (level) {
+                    StatusLevel.OK    -> Icons.Filled.CheckCircle
+                    StatusLevel.WARN  -> Icons.Filled.Warning
+                    StatusLevel.ERROR -> Icons.Filled.Cancel
+                    StatusLevel.INFO  -> Icons.Outlined.Info
+                },
+                contentDescription = null,
+                tint = when (level) {
+                    StatusLevel.OK    -> AppTheme.colors.success
+                    StatusLevel.WARN  -> AppTheme.colors.warning
+                    StatusLevel.ERROR -> MaterialTheme.colorScheme.error
+                    StatusLevel.INFO  -> MaterialTheme.colorScheme.onSurfaceVariant
+                },
+                modifier = Modifier.size(18.dp)
+            )
             Text(label, style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface)
         }
         Text(detail, style = MaterialTheme.typography.bodySmall,
             color = when (level) {
-                StatusLevel.OK    -> Color(0xFF34D399)
-                StatusLevel.WARN  -> Color(0xFFF59E0B)
+                StatusLevel.OK    -> AppTheme.colors.success
+                StatusLevel.WARN  -> AppTheme.colors.warning
                 StatusLevel.ERROR -> MaterialTheme.colorScheme.error
                 StatusLevel.INFO  -> MaterialTheme.colorScheme.onSurfaceVariant
             })
