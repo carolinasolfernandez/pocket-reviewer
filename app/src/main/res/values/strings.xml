@@ -201,5 +201,11 @@
     <string name="about_title">About</string>
     <string name="about_version">%1$s %2$s</string>
     <string name="about_author">Created by %1$s</string>
+    <string name="about_privacy">Privacy policy</string>
+    <string name="about_source">Source code on GitHub</string>
+    <string name="disclosure_title">Notification access</string>
+    <string name="disclosure_body">Pocket Reviewer reads the notifications of the chat apps you enable (Google Chat, Slack) to find links to GitHub pull requests.\n\nNotification content is processed on this device only. It is not stored and is never sent to the developer. When a pull request link is found, the app contacts GitHub and Anthropic with your own credentials to review it, and — if you connect them — Google Chat or Slack to react and reply.\n\nAndroid grants this access for all notifications; the app ignores those from other apps. You can revoke it at any time in system settings.</string>
+    <string name="disclosure_continue">Continue</string>
+    <string name="disclosure_cancel">Not now</string>
     <string name="about_license">Open source under the %1$s license</string>
 </resources>

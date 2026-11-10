@@ -96,6 +96,8 @@ To try it without any chat setup, paste a PR URL in the **Review** tab.
 | [Architecture](docs/ARCHITECTURE.md) | Code structure, for contributors |
 | [Troubleshooting](docs/TROUBLESHOOTING.md) | Common problems and how to diagnose them |
 | [Releasing](docs/RELEASING.md) | Signed release builds and the GitHub Actions workflows |
+| [Publishing on Google Play](docs/PLAY_STORE.md) | Store listing, declarations and the steps in the Play Console |
+| [Privacy policy](PRIVACY.md) | What data the app handles and where it goes |
 | [Security](SECURITY.md) | What the app can do with your credentials |
 
 ## Good to know before you rely on it

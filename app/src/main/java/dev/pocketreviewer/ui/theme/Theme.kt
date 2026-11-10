@@ -1,23 +1,16 @@
 package dev.pocketreviewer.ui.theme
 
-import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowCompat
 
 /*
  * Pocket Reviewer palette.
@@ -142,27 +135,16 @@ object AppTheme {
         @Composable @ReadOnlyComposable get() = LocalAppColors.current
 }
 
-/** App theme. Follows the system light/dark setting. */
+/**
+ * App theme. Follows the system light/dark setting. The system bars are transparent
+ * (the activity is edge-to-edge), so they show the theme background behind them.
+ */
 @Composable
 fun PocketReviewerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
     val scheme: ColorScheme = if (darkTheme) DarkScheme else LightScheme
-
-    // Paint the system bars to match, with icons that contrast.
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as? Activity)?.window ?: return@SideEffect
-            window.statusBarColor = scheme.background.toArgb()
-            window.navigationBarColor = scheme.surfaceColorAtElevation(3.dp).toArgb()
-            WindowCompat.getInsetsController(window, view).apply {
-                isAppearanceLightStatusBars = !darkTheme
-                isAppearanceLightNavigationBars = !darkTheme
-            }
-        }
-    }
 
     CompositionLocalProvider(LocalAppColors provides if (darkTheme) DarkAppColors else LightAppColors) {
         MaterialTheme(colorScheme = scheme, typography = AppTypography, content = content)

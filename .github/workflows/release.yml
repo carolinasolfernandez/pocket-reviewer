@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   release:
-    name: Signed release APK
+    name: Signed release APK and bundle
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -49,8 +49,8 @@ jobs:
       - name: Unit tests
         run: ./gradlew :app:testDebugUnitTest
 
-      - name: Build signed release APK
-        run: ./gradlew :app:assembleRelease
+      - name: Build signed release APK and app bundle
+        run: ./gradlew :app:assembleRelease :app:bundleRelease
 
       - name: Verify the APK is signed
         run: |
@@ -59,12 +59,15 @@ jobs:
           BUILD_TOOLS="$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)"
           "$BUILD_TOOLS/apksigner" verify --print-certs "$APK"
           cp "$APK" "pocket-reviewer-${VERSION_NAME}.apk"
+          # The .aab is what Google Play takes (see docs/PLAY_STORE.md).
+          cp app/build/outputs/bundle/release/app-release.aab "pocket-reviewer-${VERSION_NAME}.aab"
 
       - name: Publish GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" "pocket-reviewer-${VERSION_NAME}.apk" \
+          gh release create "$GITHUB_REF_NAME" \
+            "pocket-reviewer-${VERSION_NAME}.apk" "pocket-reviewer-${VERSION_NAME}.aab" \
             --title "Pocket Reviewer ${VERSION_NAME}" \
             --generate-notes
 

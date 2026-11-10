@@ -26,7 +26,7 @@ To build it yourself:
 
 ### Option B — command line
 
-You need JDK 17 or newer and the Android SDK (platform 34, build-tools 34).
+You need JDK 17 or newer and the Android SDK (platform 36, build-tools 35).
 
 ```bash
 # Tell Gradle where the SDK is (once per clone)

@@ -166,6 +166,22 @@ private fun AboutCard() {
                 }
             )
             Text(
+                stringResource(R.string.about_privacy),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.clickable {
+                    runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(AppInfo.PRIVACY_URL))) }
+                }
+            )
+            Text(
+                stringResource(R.string.about_source),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.clickable {
+                    runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(AppInfo.SOURCE_URL))) }
+                }
+            )
+            Text(
                 stringResource(R.string.about_license, AppInfo.LICENSE),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant

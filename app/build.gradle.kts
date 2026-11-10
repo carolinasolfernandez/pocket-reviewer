@@ -32,12 +32,12 @@ val hasReleaseSigning = listOf(
 
 android {
     namespace = "dev.pocketreviewer"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "dev.pocketreviewer"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 36
         // CI sets these from the release tag (see .github/workflows/release.yml).
         versionCode = System.getenv("VERSION_CODE")?.toIntOrNull() ?: 1
         versionName = System.getenv("VERSION_NAME")?.takeIf { it.isNotBlank() } ?: "1.0.0"

@@ -63,6 +63,27 @@ fun StatusScreen(
     var setup by remember { mutableStateOf<SetupState?>(null) }
     var connStatus by remember { mutableStateOf<ConnectionStatus?>(null) }
     var testing by remember { mutableStateOf(false) }
+    var showAccessDisclosure by remember { mutableStateOf(false) }
+
+    // Prominent disclosure: say what notification access is used for BEFORE the user is
+    // sent to the system screen to grant it.
+    if (showAccessDisclosure) {
+        AlertDialog(
+            onDismissRequest = { showAccessDisclosure = false },
+            title = { Text(stringResource(R.string.disclosure_title)) },
+            text = { Text(stringResource(R.string.disclosure_body)) },
+            confirmButton = {
+                TextButton(onClick = { showAccessDisclosure = false; onRequestNotificationAccess() }) {
+                    Text(stringResource(R.string.disclosure_continue))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showAccessDisclosure = false }) {
+                    Text(stringResource(R.string.disclosure_cancel))
+                }
+            }
+        )
+    }
     var watchedThreads by remember { mutableStateOf<Map<String, dev.pocketreviewer.util.PullRequest>>(emptyMap()) }
 
     LaunchedEffect(hasNotificationAccess) {
@@ -98,7 +119,7 @@ fun StatusScreen(
                         if (st.notificationAccess) StatusLevel.OK else StatusLevel.ERROR,
                         stringResource(if (st.notificationAccess) R.string.status_granted else R.string.status_required))
                     if (!st.notificationAccess) {
-                        Button(onClick = onRequestNotificationAccess,
+                        Button(onClick = { showAccessDisclosure = true },
                             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)) {
                             Text(stringResource(R.string.setup_grant_access))
                         }

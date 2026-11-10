@@ -105,8 +105,9 @@ needs no secrets.
 ## 5. Publishing a release from GitHub Actions
 
 `.github/workflows/release.yml` runs when a tag like `v1.2.0` is pushed. It runs the
-tests, builds the signed release APK, verifies the signature, and publishes a GitHub
-release with the APK attached and auto-generated notes.
+tests, builds the signed release APK and app bundle (`.aab`), verifies the signature,
+and publishes a GitHub release with both attached and auto-generated notes. The `.aab`
+is what Google Play takes — see [PLAY_STORE.md](PLAY_STORE.md).
 
 ### One-time setup: repository secrets
 
