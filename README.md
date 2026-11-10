@@ -1,5 +1,8 @@
 # Pocket Reviewer
 
+[![CI](https://github.com/carolinasolfernandez/pocket-reviewer/actions/workflows/ci.yml/badge.svg)](https://github.com/carolinasolfernandez/pocket-reviewer/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 An Android app that watches your chat notifications for GitHub pull request links and
 reviews them with Claude. When a teammate drops a PR link in Google Chat or Slack, the
 app reacts to the message, reviews the diff against your rules, posts the review on
@@ -33,6 +36,7 @@ It runs entirely on your phone, with your own credentials. There is no backend.
   *manual* (you confirm each step — review, post, approve, merge — from the app).
 - **Your rules**: a built-in generic rule set, markdown files from any GitHub repo, or
   text you paste. The target repo's `CLAUDE.md` / `AGENTS.md` is always included.
+- **GitHub.com or GitHub Enterprise Server.**
 - **Everything is configurable**: which owners and repos to review, the Claude model,
   review language, merge method, delays, CI handling, every chat message and every
   reaction emoji. Nothing is tied to a particular organization.
@@ -54,8 +58,12 @@ source and reviews them on GitHub; it just stays silent in the chat.
 
 ## Quick start
 
-1. **Build and install** — open the project in Android Studio and press Run, or:
+1. **Build and install** — download the APK from the
+   [latest release](https://github.com/carolinasolfernandez/pocket-reviewer/releases/latest),
+   or build it yourself: open the project in Android Studio and press Run, or:
    ```bash
+   git clone https://github.com/carolinasolfernandez/pocket-reviewer.git
+   cd pocket-reviewer
    ./gradlew assembleDebug
    adb install app/build/outputs/apk/debug/app-debug.apk
    ```
@@ -81,6 +89,7 @@ To try it without any chat setup, paste a PR URL in the **Review** tab.
 | [How it works](docs/HOW_IT_WORKS.md) | The review flow in both modes, step by step |
 | [Architecture](docs/ARCHITECTURE.md) | Code structure, for contributors |
 | [Troubleshooting](docs/TROUBLESHOOTING.md) | Common problems and how to diagnose them |
+| [Releasing](docs/RELEASING.md) | Signed release builds and the GitHub Actions workflows |
 | [Security](SECURITY.md) | What the app can do with your credentials |
 
 ## Good to know before you rely on it
@@ -89,7 +98,7 @@ To try it without any chat setup, paste a PR URL in the **Review** tab.
   with your accounts. Read [SECURITY.md](SECURITY.md) before enabling autonomous mode.
 - **It only sees what your phone is notified about.** Muted channels, notifications
   dismissed by another device, or a phone in battery saver mean missed PRs.
-- **Reviews cost API usage.** Each review sends the diff (up to 24,000 characters) plus
+- **Reviews cost API usage.** Each review sends the diff (up to 24,000 characters by default) plus
   your rules to Claude. The rules are prompt-cached between reviews.
 - **The model can be wrong.** A clean verdict is not a guarantee. Keep branch
   protection and required checks on the repositories you auto-merge.

@@ -12,6 +12,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dev.pocketreviewer.data.ReviewEntry
 import dev.pocketreviewer.data.ReviewHistoryRepository
+import dev.pocketreviewer.util.GitHubHost
 import dev.pocketreviewer.util.PullRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -34,6 +35,10 @@ object ReviewManager {
         .build()
 
     private val json = Json { ignoreUnknownKeys = true }
+
+    // REST API root for the configured GitHub host. There is a single host per install,
+    // so it is cached here and refreshed by getGithubToken() on every operation.
+    @Volatile private var apiBase: String = GitHubHost.apiBase(GitHubHost.DEFAULT)
 
     // Verdict markers Claude emits. Order doesn't matter (none is a prefix of another).
     private val VERDICT_MARKERS = listOf("REQUEST_CHANGES", "APPROVE", "COMMENT")
@@ -382,6 +387,9 @@ object ReviewManager {
         ConfigStore.load(context).notificationAnalysis
 
     private suspend fun getGithubToken(context: Context): String {
+        // Every public entry point starts here, so this is also where the API root is
+        // refreshed from the configured host (github.com or GitHub Enterprise Server).
+        apiBase = GitHubHost.apiBase(ConfigStore.load(context).githubHost)
         return SecretStore.get(context, Keys.GITHUB_TOKEN)
             ?: throw Exception("GitHub token is not configured (Settings → Accounts)")
     }
@@ -470,7 +478,7 @@ object ReviewManager {
     /** Extracts the URL for rel="next" from a GitHub Link header, or null if absent. */
     private fun parseLinkNext(linkHeader: String): String? {
         if (linkHeader.isBlank()) return null
-        // Example: <https://api.github.com/...?page=2>; rel="next", <...>; rel="last"
+        // Example: <https://api.example/...?page=2>; rel="next", <...>; rel="last"
         return linkHeader.split(",").firstOrNull { it.contains("rel=\"next\"") }
             ?.let { segment ->
                 val start = segment.indexOf('<')
@@ -508,7 +516,7 @@ object ReviewManager {
     }
 
     private fun fetchPRData(pr: PullRequest, token: String, config: AppConfig, context: Context? = null): PRData {
-        val base = "https://api.github.com/repos/${pr.owner}/${pr.repo}"
+        val base = "$apiBase/repos/${pr.owner}/${pr.repo}"
 
         // ── Core PR data ──────────────────────────────────────────────────────
         val prInfo = json.parseToJsonElement(
@@ -557,12 +565,12 @@ object ReviewManager {
             siblingRepos.mapNotNull { repo ->
                 try {
                     val branchCheck = ghGet(
-                        "https://api.github.com/repos/${pr.owner}/$repo/branches/$headRef", token
+                        "$apiBase/repos/${pr.owner}/$repo/branches/$headRef", token
                     )
                     if (branchCheck.isBlank() || branchCheck.contains("\"message\":\"Branch not found\"")) return@mapNotNull null
 
                     val prs = json.parseToJsonElement(
-                        ghGet("https://api.github.com/repos/${pr.owner}/$repo/pulls?head=${pr.owner}:$headRef&state=open", token)
+                        ghGet("$apiBase/repos/${pr.owner}/$repo/pulls?head=${pr.owner}:$headRef&state=open", token)
                     ).let { if (it is JsonArray) it else JsonArray(emptyList()) }
 
                     val relatedPR = prs.firstOrNull()?.jsonObject ?: return@mapNotNull null
@@ -571,7 +579,7 @@ object ReviewManager {
                     val relatedUrl = relatedPR["html_url"]?.jsonPrimitive?.content ?: ""
 
                     val relatedDiff = ghGet(
-                        "https://api.github.com/repos/${pr.owner}/$repo/pulls/$relatedNumber",
+                        "$apiBase/repos/${pr.owner}/$repo/pulls/$relatedNumber",
                         token, accept = "application/vnd.github.v3.diff"
                     ).take(4000)
 
@@ -706,7 +714,8 @@ object ReviewManager {
         val systemPrompt = ReviewPrompt.system(knowledgeBase, config.reviewLanguage)
         val userPrompt = ReviewPrompt.user(
             title, author, headRef, baseRef, body, fileList, data.diffText, stack,
-            existingCommentsSection, relatedPRsSection, reReviewSection, repoRulesSection
+            existingCommentsSection, relatedPRsSection, reReviewSection, repoRulesSection,
+            maxDiffChars = config.maxDiffChars
         )
 
         // OAuth (subscription) tokens require the Claude Code identity as the first
@@ -715,7 +724,7 @@ object ReviewManager {
 
         val requestBody = buildJsonObject {
             put("model", config.model)
-            put("max_tokens", 8192)
+            put("max_tokens", config.maxOutputTokens)
             // Stable prefix (instructions + KB + severities + format) in `system`, cached
             // for 1h. The diff and the PR data go in the (volatile) `user` message, so they
             // don't invalidate the cache. Verify hits with usage.cache_read_input_tokens.
@@ -775,7 +784,7 @@ object ReviewManager {
         }.toString()
 
         val request = Request.Builder()
-            .url("https://api.github.com/repos/${pr.owner}/${pr.repo}/pulls/${pr.number}/reviews")
+            .url("$apiBase/repos/${pr.owner}/${pr.repo}/pulls/${pr.number}/reviews")
             .addHeader("Authorization", "Bearer $token")
             .addHeader("Accept", "application/vnd.github.v3+json")
             .post(body.toRequestBody("application/json".toMediaType()))
@@ -809,7 +818,7 @@ object ReviewManager {
         val body = buildJsonObject { put("event", event) }.toString()
 
         val request = Request.Builder()
-            .url("https://api.github.com/repos/${pr.owner}/${pr.repo}/pulls/${pr.number}/reviews")
+            .url("$apiBase/repos/${pr.owner}/${pr.repo}/pulls/${pr.number}/reviews")
             .addHeader("Authorization", "Bearer $token")
             .addHeader("Accept", "application/vnd.github.v3+json")
             .post(body.toRequestBody("application/json".toMediaType()))
@@ -844,7 +853,7 @@ object ReviewManager {
             if (attempt > 0) Thread.sleep(1500)
             val response = client.newCall(
                 Request.Builder()
-                    .url("https://api.github.com/repos/${pr.owner}/${pr.repo}/pulls/${pr.number}/merge")
+                    .url("$apiBase/repos/${pr.owner}/${pr.repo}/pulls/${pr.number}/merge")
                     .addHeader("Authorization", "Bearer $token")
                     .addHeader("Accept", "application/vnd.github.v3+json")
                     .put(body.toRequestBody("application/json".toMediaType()))
@@ -887,7 +896,7 @@ object ReviewManager {
         // 1. the PR's head SHA
         val prResponse = executeWithRetry(
             Request.Builder()
-                .url("https://api.github.com/repos/${pr.owner}/${pr.repo}/pulls/${pr.number}")
+                .url("$apiBase/repos/${pr.owner}/${pr.repo}/pulls/${pr.number}")
                 .addHeader("Authorization", "Bearer $token")
                 .addHeader("Accept", "application/vnd.github.v3+json")
                 .build()
@@ -903,7 +912,7 @@ object ReviewManager {
         } ?: return CiStatus("NONE")
 
         // 2. the commit's check-runs — paginate because a repo may have >100 checks
-        val checkRunsUrl = "https://api.github.com/repos/${pr.owner}/${pr.repo}/commits/$headSha/check-runs?per_page=100"
+        val checkRunsUrl = "$apiBase/repos/${pr.owner}/${pr.repo}/commits/$headSha/check-runs?per_page=100"
         val checkRuns: JsonArray = run {
             val combined = mutableListOf<JsonElement>()
             var nextUrl: String? = checkRunsUrl
@@ -968,7 +977,7 @@ object ReviewManager {
     /** Lightweight mergeability check (with polling) for the manual flow. */
     suspend fun fetchHasConflicts(context: Context, pr: PullRequest): Boolean = withContext(Dispatchers.IO) {
         val token = getGithubToken(context)
-        val base = "https://api.github.com/repos/${pr.owner}/${pr.repo}"
+        val base = "$apiBase/repos/${pr.owner}/${pr.repo}"
         val (mergeable, state) = runCatching { pollMergeable(base, pr.number, token, initial = null) }
             .getOrDefault(null to null)
         MergePolicy.hasConflict(mergeable, state)

@@ -25,6 +25,7 @@ import dev.pocketreviewer.R
 import dev.pocketreviewer.api.ChatMessages
 import dev.pocketreviewer.config.AppConfig
 import dev.pocketreviewer.config.ConfigParsing
+import dev.pocketreviewer.util.GitHubHost
 import kotlinx.coroutines.launch
 
 /** Which credentials are already stored. The values themselves are never read back into the UI. */
@@ -270,7 +271,7 @@ private fun ListField(label: String, value: String, placeholder: String, help: S
 private fun NumberField(label: String, value: String, modifier: Modifier = Modifier, onChange: (String) -> Unit) {
     OutlinedTextField(
         value = value,
-        onValueChange = { v -> onChange(v.filter { it.isDigit() }.take(5)) },
+        onValueChange = { v -> onChange(v.filter { it.isDigit() }.take(6)) },
         label = { Text(label) },
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -530,13 +531,22 @@ private fun FiltersSection(config: AppConfig, save: (AppConfig) -> Unit) {
     var owners by remember(config) { mutableStateOf(config.allowedOwners.asText()) }
     var ignored by remember(config) { mutableStateOf(config.ignoredRepos.asText()) }
     var related by remember(config) { mutableStateOf(config.relatedRepos.asText()) }
+    var host by remember(config) { mutableStateOf(config.githubHost) }
 
     val draft = config.copy(
+        githubHost = GitHubHost.normalize(host),
         allowedOwners = ConfigParsing.parseList(owners),
         ignoredRepos = ConfigParsing.parseList(ignored),
         relatedRepos = ConfigParsing.parseList(related)
     )
 
+    OutlinedTextField(
+        value = host, onValueChange = { host = it },
+        label = { Text(stringResource(R.string.filters_github_host)) },
+        placeholder = { Text(GitHubHost.DEFAULT) },
+        supportingText = { Text(stringResource(R.string.filters_github_host_help)) },
+        singleLine = true, modifier = Modifier.fillMaxWidth()
+    )
     ListField(
         stringResource(R.string.filters_owners), owners, "my-org, my-user",
         stringResource(R.string.filters_owners_help)
@@ -567,6 +577,8 @@ private fun ReviewSection(config: AppConfig, save: (AppConfig) -> Unit) {
     var delayMax by remember(config) { mutableStateOf(config.delayMaxSec.toString()) }
     var ciWait by remember(config) { mutableStateOf(config.ciWaitMinutes.toString()) }
     var ignoredChecks by remember(config) { mutableStateOf(config.ignoredChecks.asText()) }
+    var maxDiff by remember(config) { mutableStateOf(config.maxDiffChars.toString()) }
+    var maxTokens by remember(config) { mutableStateOf(config.maxOutputTokens.toString()) }
 
     val (lo, hi) = ConfigParsing.delayRange(
         ConfigParsing.parseInt(delayMin, config.delayMinSec, 0, 3600),
@@ -580,7 +592,13 @@ private fun ReviewSection(config: AppConfig, save: (AppConfig) -> Unit) {
         autoMerge = autoMerge && autoApprove,
         delayMinSec = lo, delayMaxSec = hi,
         ciWaitMinutes = ConfigParsing.parseInt(ciWait, config.ciWaitMinutes, 0, 120),
-        ignoredChecks = ConfigParsing.parseList(ignoredChecks)
+        ignoredChecks = ConfigParsing.parseList(ignoredChecks),
+        maxDiffChars = ConfigParsing.parseInt(
+            maxDiff, config.maxDiffChars, AppConfig.MIN_DIFF_CHARS, AppConfig.MAX_DIFF_CHARS
+        ),
+        maxOutputTokens = ConfigParsing.parseInt(
+            maxTokens, config.maxOutputTokens, AppConfig.MIN_OUTPUT_TOKENS, AppConfig.MAX_OUTPUT_TOKENS
+        )
     )
 
     OutlinedTextField(
@@ -595,6 +613,15 @@ private fun ReviewSection(config: AppConfig, save: (AppConfig) -> Unit) {
         supportingText = { Text(stringResource(R.string.review_language_help)) },
         singleLine = true, modifier = Modifier.fillMaxWidth()
     )
+
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        NumberField(stringResource(R.string.review_max_diff), maxDiff, Modifier.weight(1f)) { maxDiff = it }
+        NumberField(stringResource(R.string.review_max_tokens), maxTokens, Modifier.weight(1f)) { maxTokens = it }
+    }
+    Help(stringResource(
+        R.string.review_limits_help,
+        AppConfig.MIN_DIFF_CHARS, AppConfig.MAX_DIFF_CHARS, AppConfig.MIN_OUTPUT_TOKENS, AppConfig.MAX_OUTPUT_TOKENS
+    ))
 
     Divider()
     SubHeading(stringResource(R.string.review_autonomous_heading))

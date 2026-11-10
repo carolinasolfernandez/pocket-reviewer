@@ -1,5 +1,6 @@
 package dev.pocketreviewer.api
 
+import dev.pocketreviewer.config.AppConfig
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -36,10 +37,17 @@ class ReviewPromptTest {
     }
 
     @Test fun `long diffs are truncated and flagged`() {
-        val u = ReviewPrompt.user("t", "a", "h", "b", "d", "f", "x".repeat(ReviewPrompt.MAX_DIFF_CHARS + 10), emptyList())
+        val u = ReviewPrompt.user("t", "a", "h", "b", "d", "f", "x".repeat(AppConfig.DEFAULT_MAX_DIFF_CHARS + 10), emptyList())
         assertTrue(u.contains("truncated"))
-        assertFalse(u.contains("x".repeat(ReviewPrompt.MAX_DIFF_CHARS + 1)))
+        assertFalse(u.contains("x".repeat(AppConfig.DEFAULT_MAX_DIFF_CHARS + 1)))
         assertTrue(u.contains("not detected"))
+    }
+
+    @Test fun `diff limit is configurable`() {
+        val u = ReviewPrompt.user("t", "a", "h", "b", "d", "f", "x".repeat(500), emptyList(), maxDiffChars = 100)
+        assertTrue(u.contains("truncated to the first 100 characters"))
+        assertTrue(u.contains("x".repeat(100)))
+        assertFalse(u.contains("x".repeat(101)))
     }
 
     @Test fun `detects languages by extension, most frequent first`() {

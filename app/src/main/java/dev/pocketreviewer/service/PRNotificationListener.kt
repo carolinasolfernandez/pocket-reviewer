@@ -251,16 +251,16 @@ class PRNotificationListener : NotificationListenerService() {
                 return
             }
 
-            val prsInMessage = PrLinks.find(newestText, cfg.allowedOwners, cfg.ignoredRepos)
+            val prsInMessage = PrLinks.find(newestText, cfg.allowedOwners, cfg.ignoredRepos, cfg.githubHost)
                 .map { it.url to it.key }
 
             // Diagnostics: PRs present in the grouped body but NOT in the new message
             // (previous messages re-included by Chat) — we ignore them on purpose.
-            val allPrKeys = PrLinks.findAll(allText).map { it.key }.toSet()
+            val allPrKeys = PrLinks.findAll(allText, cfg.githubHost).map { it.key }.toSet()
             val ignoredOld = allPrKeys - prsInMessage.map { it.second }.toSet()
             if (ignoredOld.isNotEmpty()) android.util.Log.d(TAG, "Ignored PRs from previous messages: $ignoredOld")
 
-            if (prsInMessage.isEmpty() && allText.contains("github.com") && allText.contains("/pull/")) {
+            if (prsInMessage.isEmpty() && allText.contains(cfg.githubHost) && allText.contains("/pull/")) {
                 android.util.Log.d(TAG, "PR link ignored by the owner/repo filters: ${allText.take(300)}")
             }
 
@@ -338,7 +338,7 @@ class PRNotificationListener : NotificationListenerService() {
             applicationContext.dataStore.edit { prefs -> prefs[SEEN_NOTIF_IDS_KEY] = snapshot }
         }
 
-        val prsInMessage = PrLinks.find(fullText, cfg.allowedOwners, cfg.ignoredRepos)
+        val prsInMessage = PrLinks.find(fullText, cfg.allowedOwners, cfg.ignoredRepos, cfg.githubHost)
             .map { it.url to it.key }
 
         if (prsInMessage.isEmpty()) return

@@ -17,6 +17,12 @@ class KbParsingTest {
         assertNull(KbParsing.parseRepo(""))
     }
 
+    @Test fun `accepts urls on the configured enterprise host only`() {
+        assertEquals("acme" to "handbook", KbParsing.parseRepo("https://ghe.local/acme/handbook", "ghe.local"))
+        assertEquals("acme" to "handbook", KbParsing.parseRepo("acme/handbook", "ghe.local"))
+        assertNull(KbParsing.parseRepo("https://github.com/acme/handbook", "ghe.local"))
+    }
+
     @Test fun `blank path takes every markdown file`() {
         assertTrue(KbParsing.matchesPath("README.md", ""))
         assertTrue(KbParsing.matchesPath("docs/rules/a.MD", ""))

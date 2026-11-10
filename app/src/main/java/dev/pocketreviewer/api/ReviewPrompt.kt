@@ -1,5 +1,7 @@
 package dev.pocketreviewer.api
 
+import dev.pocketreviewer.config.AppConfig
+
 /**
  * Builds the two halves of the review prompt. Pure (no Android) → unit-testable.
  *
@@ -9,8 +11,6 @@ package dev.pocketreviewer.api
  *  - [user]: everything specific to one PR (repo rules, description, diff, comments).
  */
 object ReviewPrompt {
-
-    const val MAX_DIFF_CHARS = 24_000
 
     fun system(knowledgeBase: String, reviewLanguage: String): String = """
 You are an automated code reviewer for GitHub pull requests. Review the pull request you are given against the knowledge base below and against any repo-specific rules included with the PR.
@@ -95,8 +95,9 @@ Write the review in ${reviewLanguage.trim().ifEmpty { "English" }}. Keep the ver
         relatedPRsSection: String = "",
         reReviewSection: String = "",
         repoRulesSection: String = "",
+        maxDiffChars: Int = AppConfig.DEFAULT_MAX_DIFF_CHARS,
     ): String {
-        val truncated = diffText.length > MAX_DIFF_CHARS
+        val truncated = diffText.length > maxDiffChars
         val stackLine = stack.joinToString(", ").ifEmpty { "not detected" }
         return """
 $repoRulesSection
@@ -113,9 +114,9 @@ $reReviewSection
 **Modified files:**
 $fileList
 
-**Diff:**${if (truncated) " (truncated to the first $MAX_DIFF_CHARS characters — say so if it limits the review)" else ""}
+**Diff:**${if (truncated) " (truncated to the first $maxDiffChars characters — say so if it limits the review)" else ""}
 ```diff
-${diffText.take(MAX_DIFF_CHARS)}
+${diffText.take(maxDiffChars)}
 ```
 $existingCommentsSection
 $relatedPRsSection

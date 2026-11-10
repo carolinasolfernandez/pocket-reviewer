@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import dev.pocketreviewer.api.dataStore
+import dev.pocketreviewer.util.GitHubHost
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -36,7 +37,9 @@ data class AppConfig(
     /** Slack channels to listen to (name, with or without '#', or channel id). Empty = all. */
     val slackChannels: List<String> = emptyList(),
 
-    // ── GitHub filters ───────────────────────────────────────────────────────
+    // ── GitHub ───────────────────────────────────────────────────────────────
+    /** "github.com", or the host of a GitHub Enterprise Server (e.g. "github.acme.com"). */
+    val githubHost: String = GitHubHost.DEFAULT,
     /** GitHub owners (orgs/users) whose PRs are reviewed. Empty = any owner. */
     val allowedOwners: List<String> = emptyList(),
     /** Repos to skip: "repo" (any owner) or "owner/repo". */
@@ -46,6 +49,10 @@ data class AppConfig(
 
     // ── Review behaviour ─────────────────────────────────────────────────────
     val model: String = DEFAULT_MODEL,
+    /** The diff is cut to this many characters before it is sent to the model. */
+    val maxDiffChars: Int = DEFAULT_MAX_DIFF_CHARS,
+    /** Upper bound for the length of the review (the model's `max_tokens`). */
+    val maxOutputTokens: Int = DEFAULT_MAX_OUTPUT_TOKENS,
     /** Language the review is written in. */
     val reviewLanguage: String = DEFAULT_REVIEW_LANGUAGE,
     val mergeMethod: String = DEFAULT_MERGE_METHOD,
@@ -69,6 +76,12 @@ data class AppConfig(
     companion object {
         const val DEFAULT_MODEL = "claude-opus-5-5"
         const val DEFAULT_REVIEW_LANGUAGE = "English"
+        const val DEFAULT_MAX_DIFF_CHARS = 24_000
+        const val MIN_DIFF_CHARS = 2_000
+        const val MAX_DIFF_CHARS = 400_000
+        const val DEFAULT_MAX_OUTPUT_TOKENS = 8_192
+        const val MIN_OUTPUT_TOKENS = 512
+        const val MAX_OUTPUT_TOKENS = 32_000
         const val DEFAULT_MERGE_METHOD = "squash"
         const val DEFAULT_EMOJI_WORKING = "👀"
         const val DEFAULT_EMOJI_APPROVE = "✅"
@@ -88,12 +101,15 @@ object Keys {
     const val CHAT_SPACES = "chat_spaces"                       // list
     const val SLACK_CHANNELS = "slack_channels"                 // list
 
+    const val GITHUB_HOST = "github_host"
     const val ALLOWED_OWNERS = "filter_owners"                  // list
     const val IGNORED_REPOS = "filter_ignored"                  // list
     const val RELATED_REPOS = "related_repos"                   // list
 
     const val MODEL = "review_model"
     const val REVIEW_LANGUAGE = "review_language"
+    const val MAX_DIFF_CHARS = "max_diff_chars"
+    const val MAX_OUTPUT_TOKENS = "max_output_tokens"
     const val MERGE_METHOD = "merge_method"
     const val AUTO_APPROVE = "auto_approve"
     const val AUTO_MERGE = "auto_merge"
@@ -158,11 +174,18 @@ object ConfigStore {
             sourceOtherApps = ConfigParsing.parseBool(p.str(Keys.SOURCE_OTHER), d.sourceOtherApps),
             chatSpaces = ConfigParsing.parseList(p.str(Keys.CHAT_SPACES)),
             slackChannels = ConfigParsing.parseList(p.str(Keys.SLACK_CHANNELS)),
+            githubHost = GitHubHost.normalize(p.str(Keys.GITHUB_HOST)),
             allowedOwners = ConfigParsing.parseList(p.str(Keys.ALLOWED_OWNERS)),
             ignoredRepos = ConfigParsing.parseList(p.str(Keys.IGNORED_REPOS)),
             relatedRepos = ConfigParsing.parseList(p.str(Keys.RELATED_REPOS)),
             model = p.str(Keys.MODEL)?.trim()?.takeIf { it.isNotEmpty() } ?: d.model,
             reviewLanguage = p.str(Keys.REVIEW_LANGUAGE)?.trim()?.takeIf { it.isNotEmpty() } ?: d.reviewLanguage,
+            maxDiffChars = ConfigParsing.parseInt(
+                p.str(Keys.MAX_DIFF_CHARS), d.maxDiffChars, AppConfig.MIN_DIFF_CHARS, AppConfig.MAX_DIFF_CHARS
+            ),
+            maxOutputTokens = ConfigParsing.parseInt(
+                p.str(Keys.MAX_OUTPUT_TOKENS), d.maxOutputTokens, AppConfig.MIN_OUTPUT_TOKENS, AppConfig.MAX_OUTPUT_TOKENS
+            ),
             mergeMethod = p.str(Keys.MERGE_METHOD)?.takeIf { it in AppConfig.MERGE_METHODS } ?: d.mergeMethod,
             autoApprove = ConfigParsing.parseBool(p.str(Keys.AUTO_APPROVE), d.autoApprove),
             autoMerge = ConfigParsing.parseBool(p.str(Keys.AUTO_MERGE), d.autoMerge),
@@ -190,11 +213,14 @@ object ConfigStore {
             set(Keys.SOURCE_OTHER, c.sourceOtherApps.toString())
             set(Keys.CHAT_SPACES, ConfigParsing.joinList(c.chatSpaces))
             set(Keys.SLACK_CHANNELS, ConfigParsing.joinList(c.slackChannels))
+            set(Keys.GITHUB_HOST, GitHubHost.normalize(c.githubHost))
             set(Keys.ALLOWED_OWNERS, ConfigParsing.joinList(c.allowedOwners))
             set(Keys.IGNORED_REPOS, ConfigParsing.joinList(c.ignoredRepos))
             set(Keys.RELATED_REPOS, ConfigParsing.joinList(c.relatedRepos))
             set(Keys.MODEL, c.model.trim())
             set(Keys.REVIEW_LANGUAGE, c.reviewLanguage.trim())
+            set(Keys.MAX_DIFF_CHARS, c.maxDiffChars.toString())
+            set(Keys.MAX_OUTPUT_TOKENS, c.maxOutputTokens.toString())
             set(Keys.MERGE_METHOD, c.mergeMethod)
             set(Keys.AUTO_APPROVE, c.autoApprove.toString())
             set(Keys.AUTO_MERGE, c.autoMerge.toString())

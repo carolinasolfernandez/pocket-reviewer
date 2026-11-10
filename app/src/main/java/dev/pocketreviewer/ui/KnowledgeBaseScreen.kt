@@ -18,7 +18,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import dev.pocketreviewer.R
+import dev.pocketreviewer.config.ConfigStore
 import dev.pocketreviewer.config.Keys
+import dev.pocketreviewer.util.GitHubHost
 import dev.pocketreviewer.config.SecretStore
 import dev.pocketreviewer.data.KbParsing
 import dev.pocketreviewer.data.KbRepoConfig
@@ -184,7 +186,9 @@ private fun GithubSourceEditor(
     var message by remember { mutableStateOf<String?>(null) }
     var isError by remember { mutableStateOf(false) }
 
-    val repoValid = KbParsing.parseRepo(repo) != null
+    var githubHost by remember { mutableStateOf(GitHubHost.DEFAULT) }
+    LaunchedEffect(Unit) { githubHost = ConfigStore.load(context).githubHost }
+    val repoValid = KbParsing.parseRepo(repo, githubHost) != null
     val updated = stringResource(R.string.kb_updated)
     val errorPrefix = stringResource(R.string.error_prefix)
 
@@ -223,7 +227,9 @@ private fun GithubSourceEditor(
             busy = true; message = null
             scope.launch {
                 val result = runCatching {
-                    KnowledgeBaseRepository.download(context, newConfig, SecretStore.get(context, Keys.GITHUB_TOKEN))
+                    KnowledgeBaseRepository.download(
+                        context, newConfig, SecretStore.get(context, Keys.GITHUB_TOKEN), githubHost
+                    )
                 }
                 result.onSuccess { onDownloaded(it); isError = false; message = updated }
                     .onFailure { isError = true; message = "$errorPrefix ${it.message}" }

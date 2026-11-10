@@ -43,6 +43,7 @@ import dev.pocketreviewer.messaging.SlackClient
 import dev.pocketreviewer.service.ManualFlow
 import dev.pocketreviewer.service.ManualStepService
 import dev.pocketreviewer.service.PRNotificationListener
+import dev.pocketreviewer.util.GitHubHost
 import dev.pocketreviewer.util.PullRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -252,7 +253,8 @@ class MainActivity : ComponentActivity(), SettingsActions {
 
     private suspend fun testConnections(): ConnectionStatus = withContext(Dispatchers.IO) {
         val githubToken = SecretStore.get(this@MainActivity, Keys.GITHUB_TOKEN)
-        val model = ConfigStore.load(this@MainActivity).model
+        val config = ConfigStore.load(this@MainActivity)
+        val model = config.model
         val http = okhttp3.OkHttpClient()
         var error: String? = null
 
@@ -260,7 +262,7 @@ class MainActivity : ComponentActivity(), SettingsActions {
             runCatching {
                 http.newCall(
                     okhttp3.Request.Builder()
-                        .url("https://api.github.com/user")
+                        .url("${GitHubHost.apiBase(config.githubHost)}/user")
                         .addHeader("Authorization", "Bearer $token")
                         .build()
                 ).execute().use { it.isSuccessful }

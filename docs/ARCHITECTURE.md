@@ -46,6 +46,7 @@ app/src/main/java/dev/pocketreviewer/
 │   └── KnowledgeBaseScreen.kt  Rules tab
 └── util/
     ├── PullRequest.kt
+    ├── GitHubHost.kt           github.com vs GitHub Enterprise Server addresses (pure)
     └── PrLinks.kt              PR link extraction and filters (pure)
 ```
 
@@ -166,6 +167,15 @@ UI and notification text lives in `res/values/strings*.xml` (English) with Spani
 `res/values-es/`. Text sent to GitHub or to the model, log lines and exception
 messages are English and not localized. The *review itself* is written in the language
 configured in Settings, independent of the device locale.
+
+## Build, release and CI
+
+`app/build.gradle.kts` reads release signing credentials from a git-ignored
+`keystore.properties` or from environment variables, and the version from
+`VERSION_NAME` / `VERSION_CODE`. Two GitHub Actions workflows live in
+`.github/workflows/`: `ci.yml` (tests, lint and a debug build on every push and pull
+request) and `release.yml` (signed APK published as a GitHub release when a `v*.*.*`
+tag is pushed). See [RELEASING.md](RELEASING.md).
 
 ## Testing
 

@@ -6,6 +6,15 @@ This guide takes you from a fresh clone to your first review.
 
 You need a phone running Android 8.0 (API 26) or later.
 
+The quickest way is to download the signed APK from the
+[latest release](https://github.com/carolinasolfernandez/pocket-reviewer/releases/latest)
+and open it on the phone (allow "install unknown apps" for your browser or file
+manager when asked). Note that **Google Chat reactions will not work with an APK you
+did not sign yourself** unless its signing certificate is registered in *your* Google
+Cloud project — see [GOOGLE_CHAT.md](GOOGLE_CHAT.md). Everything else works.
+
+To build it yourself:
+
 ### Option A — Android Studio
 
 1. Install [Android Studio](https://developer.android.com/studio).

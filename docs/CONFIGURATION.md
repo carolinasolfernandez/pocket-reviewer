@@ -67,18 +67,45 @@ conversations whose notification text contains one of the entries.
 
 | Setting | Default | Effect |
 |---|---|---|
+| GitHub host | `github.com` | Where your repositories live. Set it to the host of your **GitHub Enterprise Server** (for example `github.acme.com`) to use the app there. See [GitHub Enterprise Server](#github-enterprise-server) |
 | GitHub owners | *(empty = any)* | Only PRs under these organizations or users are reviewed. **Set this** if you are in chats where links to third-party repositories are shared |
 | Ignored repositories | *(empty)* | PRs in these repos are skipped. `repo` matches under any owner; `owner/repo` matches exactly |
 | Related repositories | *(empty = off)* | For changes that span repositories: if the PR's branch name also has an open PR in one of these repos (same owner), the first 4,000 characters of its diff are added to the review as context |
 
-Only `github.com` links of the form `https://github.com/<owner>/<repo>/pull/<n>` are
-recognized. GitHub Enterprise Server hosts are not supported yet.
+Only links of the form `https://<GitHub host>/<owner>/<repo>/pull/<n>` are recognized.
+
+### GitHub Enterprise Server
+
+Set **GitHub host** to your server's host name (a pasted URL is cleaned up to the bare
+host). The app then:
+
+- recognizes PR links on that host **instead of** `github.com` — one install works
+  with one host, because it holds one GitHub token;
+- calls the REST API at `https://<host>/api/v3`;
+- downloads a GitHub knowledge base from the same host.
+
+The personal access token must be created on that server. Things to check if it does
+not connect:
+
+- The phone must be able to reach the server (VPN, if it is only reachable internally).
+- The server's TLS certificate must chain to a certificate authority that Android
+  trusts by default. Certificates issued by a private company CA are **not** trusted,
+  even if the CA is installed on the phone as a user certificate. To allow that, add
+  `<certificates src="user" />` to
+  `app/src/main/res/xml/network_security_config.xml` and rebuild — understanding that
+  it lets anyone who can install a CA on the phone intercept the app's traffic.
+- Plain `http://` servers are not supported.
+
+GitHub Enterprise Cloud on `github.com` needs no configuration. Enterprise Cloud with
+data residency (`*.ghe.com`) uses a different API address and is not supported yet.
 
 ## Review behaviour
 
 | Setting | Default | Effect |
 |---|---|---|
 | Claude model | `claude-opus-5-5` | Model id used for reviews. Any Messages API model id your account can use. A smaller model is cheaper and faster; the Status tab's **Test** checks the id is valid |
+| Max diff | 24,000 characters | The diff is cut to this length before it is sent. Raise it for large PRs (2,000–400,000); cost grows with it, and diff plus rules must fit the model's context window |
+| Max review length | 8,192 tokens | Upper bound for the review the model writes (512–32,000). Must not exceed what the chosen model allows |
 | Review language | English | Language the review text is written in. The verdict word, severities and rule codes stay in English |
 | Approve clean PRs | On | *Autonomous mode.* Approve when the verdict is `APPROVE`, there are no merge conflicts and CI is not failing. Off = the app only reviews and comments |
 | Merge after approving | On | *Autonomous mode.* Merge once CI has finished without failures. Requires the previous setting |
@@ -87,8 +114,7 @@ recognized. GitHub Enterprise Server hosts are not supported yet.
 | Merge method | squash | `squash`, `merge` or `rebase`. Must be allowed in the repository's settings |
 | Ignored CI checks | *(empty)* | Checks whose name contains any of these (case-insensitive) are ignored when computing the CI status. Use it for informational checks that often fail, e.g. `snyk, codecov` |
 
-Review size: the diff is truncated to 24,000 characters and the response is capped at
-8,192 tokens. These are not configurable yet.
+When a diff is cut, the model is told so and asked to say if that limited the review.
 
 ## Messages and reactions
 
@@ -146,8 +172,10 @@ DataStore; lists are comma-separated.
 | `review_mode` | `autonomous` / `manual` |
 | `source_google_chat`, `source_slack`, `source_other_apps` | Sources (`true` / `false`) |
 | `chat_spaces`, `slack_channels` | Conversation allowlists |
+| `github_host` | GitHub host |
 | `filter_owners`, `filter_ignored`, `related_repos` | Repository filters |
 | `review_model`, `review_language`, `merge_method` | Review behaviour |
+| `max_diff_chars`, `max_output_tokens` | Review size limits |
 | `auto_approve`, `auto_merge` | Autonomous approve / merge |
 | `delay_min_sec`, `delay_max_sec`, `ci_wait_minutes` | Timing |
 | `ci_ignored_checks` | Ignored CI checks |

@@ -3,20 +3,27 @@ package dev.pocketreviewer.util
 /**
  * Finds GitHub pull request links in free text and applies the user's filters.
  * Pure (no Android) so it can be unit-tested on the JVM.
+ *
+ * Every function takes the GitHub host to look for: github.com by default, or the
+ * user's GitHub Enterprise Server host. Links to any other host are ignored, because
+ * the app holds a token for one host only.
  */
 object PrLinks {
 
-    private val PR_REGEX = Regex("""https://github\.com/([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+)/pull/(\d+)""")
+    private fun regexFor(host: String): Regex {
+        val h = Regex.escape(GitHubHost.normalize(host))
+        return Regex("""https://$h/([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+)/pull/(\d+)""", RegexOption.IGNORE_CASE)
+    }
 
     /** Every distinct PR linked in [text], in order of appearance, unfiltered. */
-    fun findAll(text: String): List<PullRequest> =
-        PR_REGEX.findAll(text).map { m ->
+    fun findAll(text: String, host: String = GitHubHost.DEFAULT): List<PullRequest> =
+        regexFor(host).findAll(text).map { m ->
             val (owner, repo, number) = m.destructured
             PullRequest(url = m.value, owner = owner, repo = repo, number = number.toInt(), key = "$owner/$repo#$number")
         }.distinctBy { it.key.lowercase() }.toList()
 
     /** Parses a single PR URL (surrounding text is ignored), or null. */
-    fun parse(url: String): PullRequest? = findAll(url.trim()).firstOrNull()
+    fun parse(url: String, host: String = GitHubHost.DEFAULT): PullRequest? = findAll(url.trim(), host).firstOrNull()
 
     /**
      * True if [pr] passes the filters:
@@ -36,6 +43,8 @@ object PrLinks {
     }
 
     /** PRs in [text] that pass the filters. */
-    fun find(text: String, allowedOwners: List<String>, ignoredRepos: List<String>): List<PullRequest> =
-        findAll(text).filter { isAllowed(it, allowedOwners, ignoredRepos) }
+    fun find(
+        text: String, allowedOwners: List<String>, ignoredRepos: List<String>,
+        host: String = GitHubHost.DEFAULT
+    ): List<PullRequest> = findAll(text, host).filter { isAllowed(it, allowedOwners, ignoredRepos) }
 }

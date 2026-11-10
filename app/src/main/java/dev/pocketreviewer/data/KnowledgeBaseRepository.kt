@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import dev.pocketreviewer.api.dataStore
+import dev.pocketreviewer.util.GitHubHost
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -43,11 +44,15 @@ data class KbRepoConfig(
 /** Pure helpers for the knowledge base (no Android) so they can be unit-tested. */
 object KbParsing {
 
-    private val REPO = Regex("""^(?:https?://github\.com/)?([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+?)(?:\.git)?/?$""")
-
-    /** "owner/repo" or a github.com URL → (owner, repo), or null if it is neither. */
-    fun parseRepo(raw: String): Pair<String, String>? =
-        REPO.find(raw.trim())?.let { it.groupValues[1] to it.groupValues[2] }
+    /**
+     * "owner/repo" or a URL on [host] (github.com or a GitHub Enterprise Server host)
+     * → (owner, repo), or null if it is neither.
+     */
+    fun parseRepo(raw: String, host: String = GitHubHost.DEFAULT): Pair<String, String>? {
+        val h = Regex.escape(GitHubHost.normalize(host))
+        val regex = Regex("""^(?:https?://$h/)?([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+?)(?:\.git)?/?$""", RegexOption.IGNORE_CASE)
+        return regex.find(raw.trim())?.let { it.groupValues[1] to it.groupValues[2] }
+    }
 
     fun normalizePath(raw: String): String = raw.trim().trim('/')
 
@@ -218,11 +223,14 @@ object KnowledgeBaseRepository {
      * [githubToken] is only needed for private repositories; public ones work without it
      * (subject to GitHub's unauthenticated rate limit).
      */
-    suspend fun download(context: Context, config: KbRepoConfig, githubToken: String?): KbInfo =
+    suspend fun download(
+        context: Context, config: KbRepoConfig, githubToken: String?,
+        githubHost: String = GitHubHost.DEFAULT
+    ): KbInfo =
         withContext(Dispatchers.IO) {
-            val (owner, repo) = KbParsing.parseRepo(config.repo)
+            val (owner, repo) = KbParsing.parseRepo(config.repo, githubHost)
                 ?: throw Exception("Repository must look like owner/repo")
-            val base = "https://api.github.com/repos/$owner/$repo"
+            val base = "${GitHubHost.apiBase(githubHost)}/repos/$owner/$repo"
 
             val branch = config.branch.trim().ifEmpty {
                 JSONObject(ghGet(base, githubToken)).optString("default_branch").ifEmpty { "main" }

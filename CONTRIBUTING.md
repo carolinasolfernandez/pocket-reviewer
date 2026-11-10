@@ -61,7 +61,8 @@ sent with every review.
 - Keep each PR to one change, with a description of what it does and how you tested
   it. Changes to detection, reactions or replies can only be verified on a device —
   say which app and Android version you tested with.
-- Make sure the unit tests pass.
+- Make sure the unit tests pass. CI runs the tests, lint and a debug build on every
+  pull request.
 - Do not include credentials, real chat content or private repository names in code,
   tests, screenshots or logs.
 

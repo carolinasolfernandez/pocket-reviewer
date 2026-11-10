@@ -85,6 +85,8 @@
     <string name="sources_other_desc">Cualquier otra notificación que contenga un link de PR. Solo detección: sin reacciones ni respuestas.</string>
 
     <!-- Filters -->
+    <string name="filters_github_host">Host de GitHub</string>
+    <string name="filters_github_host_help">github.com, o el host de tu GitHub Enterprise Server (p. ej. github.acme.com). El token de GitHub debe pertenecer a este host.</string>
     <string name="filters_owners">Owners de GitHub</string>
     <string name="filters_owners_help">Organizaciones o usuarios cuyos PRs se revisan. Dejar vacío para revisar PRs de cualquier owner.</string>
     <string name="filters_ignored">Repositorios ignorados</string>
@@ -97,6 +99,9 @@
     <string name="review_model_help">Id del modelo que se usa para los reviews. Por defecto: %1$s</string>
     <string name="review_language">Idioma del review</string>
     <string name="review_language_help">Idioma en el que se escribe el review, p. ej. English, Español, Português</string>
+    <string name="review_max_diff">Diff máximo (caracteres)</string>
+    <string name="review_max_tokens">Largo máximo del review (tokens)</string>
+    <string name="review_limits_help">Los diffs más largos que el primer límite se recortan antes del review (%1$d–%2$d). El segundo limita el largo del review (%3$d–%4$d). Valores más altos cuestan más y deben entrar en el modelo elegido.</string>
     <string name="review_autonomous_heading">Modo autónomo</string>
     <string name="review_auto_approve">Aprobar PRs limpios</string>
     <string name="review_auto_approve_desc">Cuando el veredicto es APPROVE, no hay conflictos de merge y el CI no está fallando</string>

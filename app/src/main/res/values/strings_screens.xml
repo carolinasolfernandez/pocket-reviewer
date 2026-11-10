@@ -3,7 +3,7 @@
     <!-- Review screen (manual review of a PR URL) -->
     <string name="review_screen_title">Review a PR</string>
     <string name="review_screen_url_label">PR URL</string>
-    <string name="review_screen_invalid_url">Invalid URL — it must look like github.com/owner/repo/pull/N</string>
+    <string name="review_screen_invalid_url">Invalid URL — it must look like %1$s/owner/repo/pull/N</string>
     <string name="review_screen_no_message">no message</string>
     <string name="review_screen_error_cause">Cause: %1$s</string>
     <string name="review_screen_analyze">Review</string>

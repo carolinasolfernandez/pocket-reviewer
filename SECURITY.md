@@ -19,8 +19,8 @@ sign-in, Anthropic's OAuth endpoints. Cleartext traffic is disabled.
 
 ## What is sent to Anthropic
 
-For each review: your knowledge base, the PR's title, description, diff (up to 24,000
-characters), file list, existing review comments, and the repository's `CLAUDE.md` /
+For each review: your knowledge base, the PR's title, description, diff (up to the
+configured limit, 24,000 characters by default), file list, existing review comments, and the repository's `CLAUDE.md` /
 `AGENTS.md`. Make sure sending that code to Anthropic is acceptable under your
 organization's policies.
 

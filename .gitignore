@@ -13,9 +13,10 @@ local.properties
 *.iws
 *.ipr
 
-# Keystore
+# Signing (never commit these)
 *.jks
 *.keystore
+keystore.properties
 
 # OS
 .DS_Store

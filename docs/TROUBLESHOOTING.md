@@ -49,6 +49,8 @@ remove the app from "Sleeping apps"; other manufacturers have similar lists.
 | Cannot merge — `405` | Not allowed by the repository: the merge method is disabled, required reviews or checks are missing, or the branch is protected |
 | Merge conflicts | The branch must be updated by its author |
 | CI shows as unknown | The token cannot read checks (*Checks: Read*) |
+| Every call fails on GitHub Enterprise Server | Check **Settings → Repositories → GitHub host**, that the phone can reach the server, and its TLS certificate — see [CONFIGURATION.md](CONFIGURATION.md#github-enterprise-server) |
+| PR links are not detected on GitHub Enterprise Server | Links are only recognized on the configured GitHub host |
 
 ## Claude errors
 
@@ -58,7 +60,9 @@ remove the app from "Sleeping apps"; other manufacturers have similar lists.
 | `401` | Invalid API key |
 | `404` / `not_found_error` mentioning the model | The model id in Settings → Review behaviour does not exist or is not available to your account |
 | `429` | Rate limited; the app retries a few times |
-| `400` about prompt length | The knowledge base is too large — narrow the folder or shorten the text |
+| `400` about prompt length | The knowledge base or the **Max diff** setting is too large for the model — narrow the folder, shorten the text or lower the limit |
+| `400` about `max_tokens` | **Max review length** is higher than the chosen model allows |
+| The review is cut off mid-sentence | Raise **Max review length** in Settings → Review behaviour |
 | The Claude session expired | *Sign in with Claude* only: sign in again, or switch to an API key |
 
 The Status tab's **Test** sends a one-token request to the configured model and shows
@@ -90,7 +94,8 @@ recent messages of its space by the time the review ran.
   knowledge base" in [KNOWLEDGE_BASE.md](KNOWLEDGE_BASE.md).
 - It ignores your conventions → check which rules are actually in use (Rules tab →
   Rules in use). If the selected source is empty, the built-in rules are used.
-- Reviews of large PRs miss things → the diff is truncated at 24,000 characters.
+- Reviews of large PRs miss things → the diff is truncated at 24,000 characters by
+  default. Raise **Max diff** in Settings → Review behaviour.
 - It reviews in the wrong language → Settings → Review behaviour → Review language.
 
 ## Credentials disappeared

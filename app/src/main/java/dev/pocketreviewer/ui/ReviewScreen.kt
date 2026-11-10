@@ -28,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.pocketreviewer.R
 import dev.pocketreviewer.api.ReviewManager
+import dev.pocketreviewer.config.ConfigStore
+import dev.pocketreviewer.util.GitHubHost
 import dev.pocketreviewer.util.PrLinks
 import dev.pocketreviewer.util.PullRequest
 import kotlinx.coroutines.launch
@@ -43,6 +45,10 @@ fun ReviewScreen(
     val coroutineScope = rememberCoroutineScope()
     val keyboard = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
+
+    // PR links are only recognized on the configured GitHub host.
+    var githubHost by remember { mutableStateOf(GitHubHost.DEFAULT) }
+    LaunchedEffect(Unit) { githubHost = ConfigStore.load(context).githubHost }
 
     var prUrl by remember { mutableStateOf("") }
     var state by remember { mutableStateOf<ReviewUiState>(ReviewUiState.Idle) }
@@ -65,7 +71,7 @@ fun ReviewScreen(
                 state = ReviewUiState.Idle
             },
             label = { Text(stringResource(R.string.review_screen_url_label)) },
-            placeholder = { Text("https://github.com/owner/repo/pull/123") },
+            placeholder = { Text("https://$githubHost/owner/repo/pull/123") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
@@ -82,9 +88,9 @@ fun ReviewScreen(
         // Analyze button
         Button(
             onClick = {
-                val pr = PrLinks.parse(prUrl)
+                val pr = PrLinks.parse(prUrl, githubHost)
                 if (pr == null) {
-                    state = ReviewUiState.Error(context.getString(R.string.review_screen_invalid_url))
+                    state = ReviewUiState.Error(context.getString(R.string.review_screen_invalid_url, githubHost))
                     return@Button
                 }
                 keyboard?.hide()

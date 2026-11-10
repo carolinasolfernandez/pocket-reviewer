@@ -48,6 +48,13 @@ class ConfigParsingTest {
         assertTrue(d.ignoredChecks.isEmpty())
     }
 
+    @Test fun `review limits default inside their allowed range`() {
+        val d = AppConfig()
+        assertEquals("github.com", d.githubHost)
+        assertTrue(d.maxDiffChars in AppConfig.MIN_DIFF_CHARS..AppConfig.MAX_DIFF_CHARS)
+        assertTrue(d.maxOutputTokens in AppConfig.MIN_OUTPUT_TOKENS..AppConfig.MAX_OUTPUT_TOKENS)
+    }
+
     @Test fun `a fresh install is in manual mode`() {
         // Safety: nothing may be approved or merged before the user opts in.
         assertFalse(AppConfig().autonomous)
