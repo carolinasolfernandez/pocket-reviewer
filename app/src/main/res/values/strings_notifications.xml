@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Notification channels -->
+    <string name="channel_pending_name">Detected PRs</string>
+    <string name="channel_pending_desc">PRs found in your notifications</string>
+    <string name="channel_status_name">Review status</string>
+    <string name="channel_status_desc">Review progress and results</string>
+
+    <!-- Shared -->
+    <string name="notif_error_title">Error</string>
+    <string name="notif_unknown_error">Unknown error</string>
+    <string name="notif_review_error_title">Review error</string>
+
+    <!-- PR detected (manual mode) -->
+    <string name="notif_pr_detected">PR detected — tap to review</string>
+
+    <!-- Review progress / result -->
+    <string name="notif_running_review">Running review…</string>
+    <string name="notif_review_posted">Review posted ✓</string>
+    <string name="notif_reviewing_pr">🔍 Reviewing PR…</string>
+    <string name="notif_review_failed">❌ Review error</string>
+    <string name="notif_review_ok">✅ Review OK</string>
+    <string name="notif_review_with_issues">⚠️ Review with issues</string>
+    <string name="notif_review_issues_found">⚠️ Review: issues found</string>
+    <string name="notif_review_comments_left">💬 Review: comments left</string>
+    <string name="notif_ci_in_progress">CI ⏳ in progress</string>
+    <string name="notif_ci_none">no CI</string>
+
+    <!-- Autonomous approve / merge -->
+    <string name="notif_checking_ci">✅ Checking CI…</string>
+    <string name="notif_approving">✅ Approving…</string>
+    <string name="notif_approved">✅ Approved</string>
+    <string name="notif_approved_merged">🎉 Approved and merged</string>
+    <string name="notif_approved_conflicts_not_merged">🚨 Approved — merge conflicts, not merged</string>
+    <string name="notif_approved_merge_failed">⚠️ Approved — merge failed</string>
+    <string name="notif_approved_ci_not_merged">⚠️ Approved — CI %1$s, not merged</string>
+    <string name="notif_not_approved_conflicts">🚨 Not approved — merge conflicts</string>
+    <string name="notif_not_approved_ci_failed">🚨 Not approved — CI failed</string>
+    <string name="notif_not_approved_ci_failed_checks">🚨 Not approved — CI failed (%1$s)</string>
+    <string name="notif_approve_failed">❌ Couldn\'t approve</string>
+
+    <!-- Approve / merge from the notification buttons -->
+    <string name="notif_approving_pr">Approving PR…</string>
+    <string name="notif_approving_merging">Approving and merging…</string>
+    <string name="notif_pr_approved">✅ PR approved</string>
+    <string name="notif_merged">🎉 Merged</string>
+    <string name="notif_merge_conflicts_title">Merge conflicts</string>
+    <string name="notif_merge_conflicts_text">%1$s — they need to be resolved manually</string>
+    <string name="notif_action_approve">Approve</string>
+    <string name="notif_action_approve_merge">Approve and merge</string>
+
+    <!-- Thread reply on a watched PR -->
+    <string name="notif_thread_reply_title">%1$s replied on %2$s</string>
+    <string name="notif_someone">Someone</string>
+    <string name="notif_action_rereview">Re-review</string>
+    <string name="notif_action_ignore">Ignore</string>
+
+    <!-- Manual step progress -->
+    <string name="notif_manual_approving_merging">Approving and merging %1$s…</string>
+    <string name="notif_manual_reviewing">Reviewing %1$s…</string>
+    <string name="notif_manual_approving">Approving %1$s…</string>
+    <string name="notif_manual_merging">Merging %1$s…</string>
+    <string name="notif_manual_posting">Posting comments…</string>
+    <string name="notif_manual_replying">Replying in the thread…</string>
+    <string name="notif_manual_done">Done</string>
+
+    <!-- Manual flow errors stored in the history entry -->
+    <string name="notif_error_merge_conflicts">merge conflicts</string>
+    <string name="notif_error_stage">Error in %1$s</string>
+    <string name="notif_error_approve_merge">Couldn\'t approve and merge</string>
+    <string name="notif_error_thread_reply">Couldn\'t reply in the thread</string>
+
+    <!-- Keep-alive foreground service -->
+    <string name="notif_keepalive_title">Reviewing PRs in the background…</string>
+    <string name="notif_keepalive_text">Keeping the review active</string>
+</resources>

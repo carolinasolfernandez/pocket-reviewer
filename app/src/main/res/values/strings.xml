@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Pocket Reviewer</string>
+
+    <!-- Tabs -->
+    <string name="tab_review">Review</string>
+    <string name="tab_history">History</string>
+    <string name="tab_status">Status</string>
+    <string name="tab_settings">Settings</string>
+    <string name="tab_kb">Rules</string>
+
+    <!-- Common actions -->
+    <string name="action_save">Save</string>
+    <string name="action_saved">✓ Saved</string>
+    <string name="action_remove">Remove</string>
+    <string name="action_disconnect">Disconnect</string>
+    <string name="action_test">Test</string>
+    <string name="action_close">Close</string>
+    <string name="error_prefix">Error:</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+
+    <string name="general_listen">Listen for PR links</string>
+    <string name="general_listen_on">On — PR links in your chat notifications are picked up</string>
+    <string name="general_listen_off">Paused — only reviews you start by hand</string>
+    <string name="general_mode_autonomous">Autonomous mode</string>
+    <string name="general_mode_manual">Manual mode</string>
+    <string name="general_mode_autonomous_desc">Reviews, comments, approves and merges on its own</string>
+    <string name="general_mode_manual_desc">Off — manual mode: you confirm each step from the History tab</string>
+
+    <string name="section_accounts">Accounts</string>
+    <string name="section_accounts_summary">GitHub, Claude, Google Chat and Slack credentials</string>
+    <string name="section_sources">Sources</string>
+    <string name="section_sources_summary">Which apps and channels to listen to</string>
+    <string name="section_filters">Repositories</string>
+    <string name="section_filters_summary">Which pull requests get reviewed</string>
+    <string name="section_review">Review behaviour</string>
+    <string name="section_review_summary">Model, language, auto-approve, merge and CI</string>
+    <string name="section_messages">Messages and reactions</string>
+    <string name="section_messages_summary">What the app writes and reacts with in chat</string>
+
+    <!-- Accounts -->
+    <string name="accounts_encrypted_note">Credentials are encrypted on this device with the Android Keystore and are never shown again after saving.</string>
+    <string name="secret_stored_placeholder">•••••••• (saved)</string>
+    <string name="secret_stored_help">Saved. Type a new value to replace it. %1$s</string>
+
+    <string name="accounts_github">GitHub</string>
+    <string name="accounts_github_token">Personal access token</string>
+    <string name="accounts_github_help">Needs read access to the repos. To approve and merge: Pull requests and Contents read/write (fine-grained) or the repo scope (classic).</string>
+
+    <string name="accounts_claude">Claude</string>
+    <string name="accounts_claude_key">Anthropic API key</string>
+    <string name="accounts_claude_key_help">From console.anthropic.com. Billed to your API account.</string>
+    <string name="claude_oauth_title">Or sign in with a Claude subscription (experimental)</string>
+    <string name="claude_oauth_warning">Experimental and unsupported: it reuses the sign-in flow of Anthropic\'s own tools, may stop working without notice, and may not be permitted by Anthropic\'s terms for third-party apps. Prefer an API key.</string>
+    <string name="claude_oauth_start">Sign in with Claude</string>
+    <string name="claude_oauth_code">Authorization code</string>
+    <string name="claude_oauth_code_error">Invalid or expired code, try again</string>
+    <string name="claude_oauth_confirm">Confirm code</string>
+    <string name="claude_oauth_connecting">Connecting…</string>
+    <string name="claude_oauth_connected">Signed in with Claude</string>
+    <string name="claude_oauth_connected_desc">Using your subscription instead of the API key</string>
+
+    <string name="accounts_google">Google Chat</string>
+    <string name="accounts_google_connect">Connect Google account</string>
+    <string name="accounts_google_connected">Google account connected</string>
+    <string name="accounts_google_connected_desc">Can react and reply in Google Chat</string>
+    <string name="accounts_google_help">Optional. Without it PRs from Google Chat are still reviewed, but the app can\'t react or reply there. Requires your own Google Cloud OAuth client — see docs/GOOGLE_CHAT.md.</string>
+
+    <string name="accounts_slack">Slack</string>
+    <string name="accounts_slack_token">User OAuth token</string>
+    <string name="accounts_slack_help">Optional. A user token (xoxp-…) from a Slack app you create — see docs/SLACK.md. Without it PRs from Slack are still reviewed, but the app can\'t react or reply there.</string>
+    <string name="accounts_slack_test_ok">✓ Valid:</string>
+    <string name="accounts_slack_test_fail">✗ Slack rejected the token:</string>
+
+    <!-- Sources -->
+    <string name="sources_google_chat">Google Chat</string>
+    <string name="sources_google_chat_desc">Notifications from Google Chat (or Chat inside Gmail)</string>
+    <string name="sources_chat_spaces">Spaces to listen to</string>
+    <string name="sources_chat_spaces_help">Comma-separated space names. Leave empty for all spaces and direct messages.</string>
+    <string name="sources_slack">Slack</string>
+    <string name="sources_slack_desc">Notifications from the Slack app</string>
+    <string name="sources_slack_channels">Channels to listen to</string>
+    <string name="sources_slack_channels_help">Comma-separated channel names. Leave empty for all channels and direct messages.</string>
+    <string name="sources_other">Other apps</string>
+    <string name="sources_other_desc">Any other notification containing a PR link. Detection only: no reactions or replies.</string>
+
+    <!-- Filters -->
+    <string name="filters_owners">GitHub owners</string>
+    <string name="filters_owners_help">Organizations or users whose PRs are reviewed. Leave empty to review PRs from any owner.</string>
+    <string name="filters_ignored">Ignored repositories</string>
+    <string name="filters_ignored_help">PRs in these repos are skipped. Use repo or owner/repo.</string>
+    <string name="filters_related">Related repositories</string>
+    <string name="filters_related_help">Optional. If a PR\'s branch also has an open PR in one of these repos (same owner), its diff is given to the reviewer as context.</string>
+
+    <!-- Review behaviour -->
+    <string name="review_model">Claude model</string>
+    <string name="review_model_help">Model id used for reviews. Default: %1$s</string>
+    <string name="review_language">Review language</string>
+    <string name="review_language_help">Language the review is written in, e.g. English, Español, Português</string>
+    <string name="review_autonomous_heading">Autonomous mode</string>
+    <string name="review_auto_approve">Approve clean PRs</string>
+    <string name="review_auto_approve_desc">When the verdict is APPROVE, there are no merge conflicts and CI is not failing</string>
+    <string name="review_auto_merge">Merge after approving</string>
+    <string name="review_auto_merge_desc">Only once CI has finished without failures</string>
+    <string name="review_delay_min">Min delay (s)</string>
+    <string name="review_delay_max">Max delay (s)</string>
+    <string name="review_delay_help">The review starts a random time within this range after the notification. Use 0 and 0 to start immediately.</string>
+    <string name="review_ci_wait">Wait for CI (minutes)</string>
+    <string name="review_ci_wait_help">How long to wait for running checks before giving up on the merge.</string>
+    <string name="review_merge_method">Merge method</string>
+    <string name="review_ignored_checks">Ignored CI checks</string>
+    <string name="review_ignored_checks_help">Checks whose name contains any of these don\'t count towards the CI status.</string>
+
+    <!-- Messages and reactions -->
+    <string name="messages_heading">Chat messages</string>
+    <string name="messages_blank_help">Leave a message empty to never send it.</string>
+    <string name="messages_thread">Review left comments</string>
+    <string name="messages_thread_help">Posted in the thread when the review leaves comments on the PR</string>
+    <string name="messages_conflicts">Merge conflicts</string>
+    <string name="messages_conflicts_help">Posted when the PR can\'t be merged because of conflicts</string>
+    <string name="messages_approve_failed">Approval failed</string>
+    <string name="messages_approve_failed_help">Posted when approving fails. {error} is replaced with the reason.</string>
+    <string name="emoji_heading">Reactions</string>
+    <string name="emoji_help">An emoji (👀 ✅ 💬) or a shortcode without colons (eyes, white_check_mark, or a custom emoji of your workspace).</string>
+    <string name="emoji_working">Reviewing</string>
+    <string name="emoji_approve">Approved</string>
+    <string name="emoji_comment">Comments</string>
+
+    <!-- Knowledge base -->
+    <string name="kb_title">Review rules</string>
+    <string name="kb_intro">The knowledge base the reviewer checks every PR against. A CLAUDE.md or AGENTS.md in the PR\'s own repository is always added on top.</string>
+    <string name="kb_source_builtin">Built-in rules</string>
+    <string name="kb_source_builtin_desc">Generic rules: correctness, security, data, APIs, tests, performance, maintainability</string>
+    <string name="kb_source_github">GitHub repository</string>
+    <string name="kb_source_github_desc">Markdown files from a repo and folder you choose</string>
+    <string name="kb_source_text">Custom text</string>
+    <string name="kb_source_text_desc">Paste or write your own rules</string>
+    <string name="kb_repo">Repository</string>
+    <string name="kb_repo_help">owner/repo or a github.com URL. Private repos use your GitHub token.</string>
+    <string name="kb_branch">Branch</string>
+    <string name="kb_branch_placeholder">default</string>
+    <string name="kb_path">Folder or file</string>
+    <string name="kb_path_help">All .md files under the folder are used. Leave it empty to use every .md file in the repo.</string>
+    <string name="kb_download">Download rules</string>
+    <string name="kb_update">Update rules</string>
+    <string name="kb_downloading">Downloading…</string>
+    <string name="kb_updated">✓ Rules updated</string>
+    <string name="kb_last_update">Last updated %1$s · %2$d files · %3$d characters</string>
+    <string name="kb_text_label">Your rules</string>
+    <string name="kb_text_placeholder">Markdown works best. Describe your architecture, conventions and what the reviewer must flag.</string>
+    <string name="kb_text_help">%1$d characters</string>
+    <string name="kb_extra_title">Extra instructions</string>
+    <string name="kb_extra_help">Added on top of the selected rules, whichever source you use. They win when they conflict.</string>
+    <string name="kb_extra_placeholder">e.g. Be strict about missing tests. Don\'t comment on formatting.</string>
+    <string name="kb_files_in_use">Rules in use (%1$d)</string>
+    <string name="kb_fallback_note">This source is empty, so the built-in rules are used until you add content.</string>
+
+    <!-- Status -->
+    <string name="status_title">Status</string>
+    <string name="setup_ready">Setup complete</string>
+    <string name="setup_incomplete">Finish setting up</string>
+    <string name="setup_notification_access">Notification access</string>
+    <string name="setup_grant_access">Grant notification access</string>
+    <string name="setup_github_token">GitHub token</string>
+    <string name="setup_claude">Claude credentials</string>
+    <string name="setup_google_chat">Google Chat account</string>
+    <string name="setup_slack">Slack token</string>
+    <string name="setup_open_settings">Open settings</string>
+    <string name="status_granted">Granted</string>
+    <string name="status_required">Required</string>
+    <string name="status_set">Set</string>
+    <string name="status_connected">Connected</string>
+    <string name="status_detection_only">Detection only</string>
+    <string name="status_service">Service</string>
+    <string name="status_listening">Listening</string>
+    <string name="status_enabled">On</string>
+    <string name="status_paused">Paused</string>
+    <string name="status_mode">Mode</string>
+    <string name="status_model">Model</string>
+    <string name="status_battery">Battery optimization</string>
+    <string name="status_unrestricted">Unrestricted</string>
+    <string name="status_restricted">Restricted</string>
+    <string name="status_battery_help">For autonomous reviews to finish while the app is closed, turn off battery optimization for this app (essential on Samsung).</string>
+    <string name="status_battery_action">Turn off optimization</string>
+    <string name="status_watched_threads">Watched threads</string>
+    <string name="status_connections">Connections</string>
+    <string name="status_testing">Testing…</string>
+    <string name="status_test_hint">Tap Test to check every connection</string>
+    <string name="status_ok">OK</string>
+    <string name="status_failed">Failed</string>
+    <string name="status_not_configured">Not configured</string>
+
+    <!-- About -->
+    <string name="about_title">About</string>
+    <string name="about_version">%1$s %2$s</string>
+    <string name="about_author">Created by %1$s</string>
+    <string name="about_license">Open source under the %1$s license</string>
+</resources>

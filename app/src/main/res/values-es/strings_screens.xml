@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Review screen (manual review of a PR URL) -->
+    <string name="review_screen_title">Revisar un PR</string>
+    <string name="review_screen_url_label">URL del PR</string>
+    <string name="review_screen_invalid_url">URL inválida — debe tener la forma github.com/owner/repo/pull/N</string>
+    <string name="review_screen_no_message">sin mensaje</string>
+    <string name="review_screen_error_cause">Causa: %1$s</string>
+    <string name="review_screen_analyze">Revisar</string>
+    <string name="review_screen_analyzing">Revisando…</string>
+    <string name="review_screen_analyzing_pr">Revisando %1$s…</string>
+    <string name="review_screen_post_error">No se pudo publicar: %1$s</string>
+    <string name="review_screen_approve_error">No se pudo aprobar: %1$s</string>
+    <string name="review_screen_merge_error">No se pudo mergear</string>
+    <string name="review_screen_verdict_approved">✅ Aprobado</string>
+    <string name="review_screen_verdict_issues">⚠️ Con problemas</string>
+    <string name="review_screen_verdict_comments">💬 Con comentarios</string>
+    <string name="review_screen_result_title">Review del PR</string>
+    <string name="review_screen_review_header">Review</string>
+    <string name="review_screen_copy">Copiar</string>
+    <string name="review_screen_copied">¡Copiado!</string>
+    <string name="review_screen_post_comments">Publicar comentarios en GitHub</string>
+    <string name="review_screen_approve">✅ Aprobar</string>
+    <string name="review_screen_merge">🎉 Mergear</string>
+    <string name="review_screen_approve_and_merge">🎉 Aprobar y mergear</string>
+    <string name="review_screen_posting">Publicando en GitHub…</string>
+    <string name="review_screen_approving">Aprobando PR…</string>
+    <string name="review_screen_merging">Mergeando…</string>
+    <string name="review_screen_posted">✅ Comentarios publicados en GitHub</string>
+    <string name="review_screen_approved">✅ PR aprobado</string>
+    <string name="review_screen_merged">🎉 Mergeado</string>
+    <string name="review_screen_ci_pending">⏳ Los checks de CI todavía están corriendo. Esperar a que terminen antes de aprobar o mergear.</string>
+    <string name="review_screen_ci_none">ℹ️ Este PR no tiene checks de CI (o todavía no empezaron). Verificar antes de mergear.</string>
+    <string name="review_screen_conflicts_chip">⚠️ Conflictos de merge</string>
+    <string name="review_screen_conflicts_warning">⚠️ Este PR tiene conflictos de merge: GitHub no permitirá mergearlo hasta resolverlos. En modo autónomo no se aprueba ni se mergea.</string>
+
+    <!-- History screen -->
+    <string name="history_title">Historial</string>
+    <string name="history_clear">Limpiar</string>
+    <string name="history_cancel">Cancelar</string>
+    <string name="history_empty">Todavía no hay PRs</string>
+    <string name="history_clear_title">¿Limpiar historial?</string>
+    <string name="history_clear_message">Se borrarán todas las entradas.</string>
+    <string name="history_chip_pending">Pendiente</string>
+    <string name="history_chip_merged">Mergeado</string>
+    <string name="history_chip_approved">Aprobado</string>
+    <string name="history_chip_commented">Comentado</string>
+    <string name="history_chip_conflicts">Conflictos</string>
+    <string name="history_view_on_github">Ver en GitHub →</string>
+    <!-- %1$s: the history_done_* words joined with " · " -->
+    <string name="history_already_done">⚠️ Este PR ya fue %1$s. Se puede volver a hacer si hace falta.</string>
+    <string name="history_done_commented">comentado</string>
+    <string name="history_done_approved">aprobado</string>
+    <string name="history_done_merged">mergeado</string>
+    <string name="history_error_generic">Error</string>
+    <string name="history_post">Publicar en GitHub</string>
+    <string name="history_post_again">Publicar de nuevo</string>
+    <string name="history_approve_again">✅ Aprobar de nuevo</string>
+    <string name="history_approve_and_merge_again">🎉 Aprobar y mergear de nuevo</string>
+    <string name="history_posted">✅ Publicado en GitHub</string>
+    <string name="history_merged">🎉 Mergeado</string>
+
+    <!-- History: manual flow steps (%1$s is the PR key, e.g. owner/repo#123) -->
+    <string name="history_step_review_title">Revisar %1$s</string>
+    <string name="history_step_review_desc">Corre el review con Claude (reacciona con 👀; todavía no publica ni aprueba nada).</string>
+    <string name="history_step_review_confirm">Revisar</string>
+    <string name="history_step_approve_title">Aprobar %1$s</string>
+    <string name="history_step_approve_desc">El review salió limpio. Se aprobará el PR en GitHub.</string>
+    <string name="history_step_approve_confirm">Aprobar</string>
+    <string name="history_step_merge_title">Mergear %1$s</string>
+    <!-- %1$s: CI state token (SUCCESS, PENDING, FAILURE, NONE) -->
+    <string name="history_step_merge_desc">Ya aprobado. CI: %1$s</string>
+    <!-- %1$s: comma-separated names of failing checks -->
+    <string name="history_step_merge_failing">falla: %1$s</string>
+    <string name="history_step_merge_conflicts">⚠️ HAY CONFLICTOS DE MERGE.</string>
+    <string name="history_step_merge_confirm">Mergear</string>
+    <string name="history_step_post_title">Publicar comentarios (%1$s)</string>
+    <string name="history_step_post_desc">El review de abajo se publicará como comentario en GitHub.</string>
+    <string name="history_step_post_confirm">Publicar</string>
+    <string name="history_step_reply_title">Responder en el thread (%1$s)</string>
+    <string name="history_step_reply_empty">(vacío — no se responde en el thread)</string>
+    <string name="history_step_reply_confirm">Responder</string>
+    <string name="history_step_skip">Omitir</string>
+
+    <!-- Status screen -->
+    <string name="status_watched_threads_waiting">Esperando respuesta en estos threads:</string>
+    <string name="status_unwatch">Dejar de seguir</string>
+    <string name="status_last_log">Último log</string>
+</resources>

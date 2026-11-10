@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Review screen (manual review of a PR URL) -->
+    <string name="review_screen_title">Review a PR</string>
+    <string name="review_screen_url_label">PR URL</string>
+    <string name="review_screen_invalid_url">Invalid URL — it must look like github.com/owner/repo/pull/N</string>
+    <string name="review_screen_no_message">no message</string>
+    <string name="review_screen_error_cause">Cause: %1$s</string>
+    <string name="review_screen_analyze">Review</string>
+    <string name="review_screen_analyzing">Reviewing…</string>
+    <string name="review_screen_analyzing_pr">Reviewing %1$s…</string>
+    <string name="review_screen_post_error">Couldn\'t post: %1$s</string>
+    <string name="review_screen_approve_error">Couldn\'t approve: %1$s</string>
+    <string name="review_screen_merge_error">Couldn\'t merge</string>
+    <string name="review_screen_verdict_approved">✅ Approved</string>
+    <string name="review_screen_verdict_issues">⚠️ Issues found</string>
+    <string name="review_screen_verdict_comments">💬 Comments</string>
+    <string name="review_screen_result_title">PR review</string>
+    <string name="review_screen_review_header">Review</string>
+    <string name="review_screen_copy">Copy</string>
+    <string name="review_screen_copied">Copied!</string>
+    <string name="review_screen_post_comments">Post comments to GitHub</string>
+    <string name="review_screen_approve">✅ Approve</string>
+    <string name="review_screen_merge">🎉 Merge</string>
+    <string name="review_screen_approve_and_merge">🎉 Approve and merge</string>
+    <string name="review_screen_posting">Posting to GitHub…</string>
+    <string name="review_screen_approving">Approving PR…</string>
+    <string name="review_screen_merging">Merging…</string>
+    <string name="review_screen_posted">✅ Comments posted to GitHub</string>
+    <string name="review_screen_approved">✅ PR approved</string>
+    <string name="review_screen_merged">🎉 Merged</string>
+    <string name="review_screen_ci_pending">⏳ CI checks are still running. Wait for them to finish before approving or merging.</string>
+    <string name="review_screen_ci_none">ℹ️ This PR has no CI checks (or they haven\'t started yet). Double-check before merging.</string>
+    <string name="review_screen_conflicts_chip">⚠️ Merge conflicts</string>
+    <string name="review_screen_conflicts_warning">⚠️ This PR has merge conflicts: GitHub won\'t let it merge until they are resolved. In autonomous mode it is neither approved nor merged.</string>
+
+    <!-- History screen -->
+    <string name="history_title">History</string>
+    <string name="history_clear">Clear</string>
+    <string name="history_cancel">Cancel</string>
+    <string name="history_empty">No PRs yet</string>
+    <string name="history_clear_title">Clear history?</string>
+    <string name="history_clear_message">All entries will be deleted.</string>
+    <string name="history_chip_pending">Pending</string>
+    <string name="history_chip_merged">Merged</string>
+    <string name="history_chip_approved">Approved</string>
+    <string name="history_chip_commented">Commented</string>
+    <string name="history_chip_conflicts">Conflicts</string>
+    <string name="history_view_on_github">View on GitHub →</string>
+    <!-- %1$s: the history_done_* words joined with " · " -->
+    <string name="history_already_done">⚠️ This PR was already %1$s. You can do it again if you want.</string>
+    <string name="history_done_commented">commented on</string>
+    <string name="history_done_approved">approved</string>
+    <string name="history_done_merged">merged</string>
+    <string name="history_error_generic">Error</string>
+    <string name="history_post">Post to GitHub</string>
+    <string name="history_post_again">Post again</string>
+    <string name="history_approve_again">✅ Approve again</string>
+    <string name="history_approve_and_merge_again">🎉 Approve and merge again</string>
+    <string name="history_posted">✅ Posted to GitHub</string>
+    <string name="history_merged">🎉 Merged</string>
+
+    <!-- History: manual flow steps (%1$s is the PR key, e.g. owner/repo#123) -->
+    <string name="history_step_review_title">Review %1$s</string>
+    <string name="history_step_review_desc">Runs the review with Claude (reacts with 👀; nothing is posted or approved yet).</string>
+    <string name="history_step_review_confirm">Review</string>
+    <string name="history_step_approve_title">Approve %1$s</string>
+    <string name="history_step_approve_desc">The review came back clean. The PR will be approved on GitHub.</string>
+    <string name="history_step_approve_confirm">Approve</string>
+    <string name="history_step_merge_title">Merge %1$s</string>
+    <!-- %1$s: CI state token (SUCCESS, PENDING, FAILURE, NONE) -->
+    <string name="history_step_merge_desc">Already approved. CI: %1$s</string>
+    <!-- %1$s: comma-separated names of failing checks -->
+    <string name="history_step_merge_failing">failing: %1$s</string>
+    <string name="history_step_merge_conflicts">⚠️ THERE ARE MERGE CONFLICTS.</string>
+    <string name="history_step_merge_confirm">Merge</string>
+    <string name="history_step_post_title">Post comments (%1$s)</string>
+    <string name="history_step_post_desc">The review below will be posted as a comment on GitHub.</string>
+    <string name="history_step_post_confirm">Post</string>
+    <string name="history_step_reply_title">Reply in the thread (%1$s)</string>
+    <string name="history_step_reply_empty">(empty — nothing will be posted in the thread)</string>
+    <string name="history_step_reply_confirm">Reply</string>
+    <string name="history_step_skip">Skip</string>
+
+    <!-- Status screen -->
+    <string name="status_watched_threads_waiting">Waiting for a reply in these threads:</string>
+    <string name="status_unwatch">Stop watching</string>
+    <string name="status_last_log">Latest log</string>
+</resources>
