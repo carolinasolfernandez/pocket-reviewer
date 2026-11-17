@@ -41,6 +41,11 @@ object EmojiSpec {
         "mag" to "🔍",
         "sparkles" to "✨",
         "bug" to "🐛",
+        "heart" to "❤️",
+        "clap" to "👏",
+        "bulb" to "💡",
+        "lock" to "🔒",
+        "hammer_and_wrench" to "🛠️",
     )
 
     // Aliases people commonly type that are not the canonical Slack name.
