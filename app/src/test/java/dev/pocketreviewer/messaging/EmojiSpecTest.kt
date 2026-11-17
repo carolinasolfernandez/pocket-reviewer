@@ -44,6 +44,16 @@ class EmojiSpecTest {
         assertNull(EmojiSpec.toSlackName("🦄"))
     }
 
+    @Test fun `extra reaction emoji map in both directions`() {
+        assertEquals("👏", EmojiSpec.toUnicode("clap"))
+        assertEquals("clap", EmojiSpec.toSlackName("👏"))
+        assertEquals("heart", EmojiSpec.toSlackName("❤️"))
+        assertEquals("heart", EmojiSpec.toSlackName("❤"))
+        assertEquals("hammer_and_wrench", EmojiSpec.toSlackName("🛠️"))
+        assertEquals("💡", EmojiSpec.toUnicode(":bulb:"))
+        assertEquals("lock", EmojiSpec.toSlackName("🔒"))
+    }
+
     @Test fun `default reactions resolve on both platforms`() {
         val d = dev.pocketreviewer.config.AppConfig()
         listOf(d.emojiWorking, d.emojiApprove, d.emojiComment).forEach { spec ->
